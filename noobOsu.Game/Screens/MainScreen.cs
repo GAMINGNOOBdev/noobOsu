@@ -15,7 +15,7 @@ namespace noobOsu.Game.Screens
         private DrawableBeatmap drawableBeatmap;
         private string beatmapPath;
 
-        public MainScreen(string path = "Songs/mymap/mymap.osu")
+        public MainScreen(string path = "Songs/mytestmap/mytestmap.osu")
         {
             if (INSTANCE != null) return;
             INSTANCE = this;
@@ -34,6 +34,8 @@ namespace noobOsu.Game.Screens
             drawableBeatmap = new DrawableBeatmap(beatmap);
             drawableBeatmap.SetDrawContainer(contents);
             drawableBeatmap.Load(noobOsuAudioManager.INSTANCE);
+
+            drawableBeatmap.StartBeatmap(Scheduler);
         }
 
         protected override void LoadComplete()
@@ -51,11 +53,6 @@ namespace noobOsu.Game.Screens
             base.Dispose(isDisposing);
 
             drawableBeatmap.Dispose();
-        }
-
-        protected override void OnMouseUp(MouseUpEvent e)
-        {
-            drawableBeatmap.StartBeatmap(Scheduler);
         }
 
         private void ChangeBeatmap(string beatmapName)
