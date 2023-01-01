@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "noobOsu.sln",
+    "projects": [
+      "noobOsu.Game\\noobOsu.Game.csproj",
+      "noobOsu.Resources\\noobOsu.Resources.csproj",
+      "noobOsu.iOS\\noobOsu.iOS.csproj"
+    ]
+  }
+}

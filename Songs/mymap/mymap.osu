@@ -1,0 +1,91 @@
+osu file format v14
+
+[General]
+AudioFilename: audio.mp3
+AudioLeadIn: 0
+PreviewTime: -1
+Countdown: 0
+SampleSet: Soft
+StackLeniency: 0.7
+Mode: 0
+LetterboxInBreaks: 0
+WidescreenStoryboard: 0
+
+[Editor]
+DistanceSpacing: 0.7
+BeatDivisor: 4
+GridSize: 8
+TimelineZoom: 0.9000002
+
+[Metadata]
+Title:+ERABY+E CONNEC+10N
+TitleUnicode:+ERABY+E CONNEC+10N
+Artist:Camellia
+ArtistUnicode:かめりあ
+Creator:GAMINGNOOB
+Version:Insanely bad connection
+Source:
+Tags:instrumental electronic camelliasong featured artist  hardcore
+BeatmapID:0
+BeatmapSetID:-1
+
+[Difficulty]
+HPDrainRate:6
+CircleSize:4
+OverallDifficulty:8.6
+ApproachRate:9.2
+SliderMultiplier:1.8
+SliderTickRate:1
+
+[Events]
+//Background and Video events
+//Break Periods
+//Storyboard Layer 0 (Background)
+//Storyboard Layer 1 (Fail)
+//Storyboard Layer 2 (Pass)
+//Storyboard Layer 3 (Foreground)
+//Storyboard Layer 4 (Overlay)
+//Storyboard Sound Samples
+
+[TimingPoints]
+823,260.869565217391,4,2,0,100,1,0
+823,-200,4,2,0,100,0,0
+16475,-66.6666666666667,4,2,0,100,0,0
+
+
+[Colours]
+Combo1 : 0,0,183
+Combo2 : 157,0,0
+
+[HitObjects]
+91,78,823,6,0,B|29:150|29:150|206:165|206:165|189:244|189:244|79:291|79:291|147:309|147:309|311:341|311:341|283:279|283:279|447:284|447:284|350:167,1,1080
+364,64,4996,6,0,B|505:216|505:216|206:156|206:156|374:330|374:330|103:350|103:350|102:270,1,1080
+389,285,9170,6,0,B|299:292|134:292|122:195|190:145|471:124,1,540
+55,45,11257,2,0,P|209:172|290:352,1,360
+100,163,12627,2,0,L|107:93,1,67.5
+106,95,12953,2,0,L|101:180,1,67.5
+102,162,13279,1,0,0:0:0:0:
+102,162,13409,1,0,0:0:0:0:
+102,162,13540,1,0,0:0:0:0:
+70,113,15431,5,0,0:0:0:0:
+65,132,15496,1,0,0:0:0:0:
+60,152,15561,1,0,0:0:0:0:
+55,171,15626,1,0,0:0:0:0:
+50,191,15691,1,0,0:0:0:0:
+63,201,15757,1,0,0:0:0:0:
+82,208,15822,1,0,0:0:0:0:
+101,216,15887,1,0,0:0:0:0:
+120,223,15952,5,0,0:0:0:0:
+139,230,16017,1,0,0:0:0:0:
+157,239,16083,1,0,0:0:0:0:
+172,252,16148,1,0,0:0:0:0:
+188,265,16213,1,0,0:0:0:0:
+208,263,16278,1,0,0:0:0:0:
+228,260,16344,1,0,0:0:0:0:
+248,258,16409,1,0,0:0:0:0:
+267,264,16474,1,0,0:0:0:0:
+287,270,16539,5,0,0:0:0:0:
+306,276,16604,1,0,0:0:0:0:
+284,223,16670,2,0,P|367:154|436:281,1,270
+452,231,16996,2,0,P|397:114|288:228,1,337.500012874604
+396,168,17518,1,0,0:0:0:0:

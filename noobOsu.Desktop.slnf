@@ -1,0 +1,11 @@
+﻿{
+  "solution": {
+    "path": "noobOsu.sln",
+    "projects": [
+      "noobOsu.Desktop\\noobOsu.Desktop.csproj",
+      "noobOsu.Game\\noobOsu.Game.csproj",
+      "noobOsu.Game.Tests\\noobOsu.Game.Tests.csproj",
+      "noobOsu.Resources\\noobOsu.Resources.csproj"
+    ]
+  }
+}
