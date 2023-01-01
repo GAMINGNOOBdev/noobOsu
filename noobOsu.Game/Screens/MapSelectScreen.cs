@@ -14,7 +14,6 @@ namespace noobOsu.Game.Screens
         public static MapSelectScreen INSTANCE { get; private set; }
 
         private readonly List<Button> beatmapsSelect = new List<Button>();
-        private readonly List<string> beatmapNames = new List<string>();
         private string SelectedSongDifficulty => SelectedSongFolder;
         private string SelectedSongFolder = "mymap";
 
@@ -22,19 +21,16 @@ namespace noobOsu.Game.Screens
         {
             if (INSTANCE != null) return;   
             INSTANCE = this;
-
-            foreach (string s in Directory.EnumerateDirectories("Songs/", "*", SearchOption.TopDirectoryOnly))
-            {
-                beatmapNames.Add(s.Substring(6));
-            }
         }
         
         [BackgroundDependencyLoader]
         private void load()
         {
             int yOffset = 20;
-            foreach (string songName in beatmapNames)
+
+            foreach (string s in Directory.EnumerateDirectories("Songs/", "*", SearchOption.TopDirectoryOnly))
             {
+                string songName = s.Substring("Songs/".Length);
                 BasicButton b = new BasicButton();
                 b.Text = songName;
                 b.Y = yOffset;
