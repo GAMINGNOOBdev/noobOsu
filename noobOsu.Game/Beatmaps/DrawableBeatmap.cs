@@ -77,7 +77,8 @@ namespace noobOsu.Game.Beatmaps
             if (audioManager != null)
             {
                 beatmap.Load(audioManager);
-                AddInternal(beatmap.MapAudio);
+                if (beatmap.MapAudio != null)
+                    AddInternal(beatmap.MapAudio);
             }
 
             DrawableHitObject obj;
