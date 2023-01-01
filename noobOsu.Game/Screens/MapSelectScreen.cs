@@ -57,7 +57,8 @@ namespace noobOsu.Game.Screens
 
         private void LoadMap()
         {
-            MainScreen ms = new MainScreen("Songs/" + SelectedSongFolder + "/" + SelectedSongDifficulty + ".osu");
+            MainScreen ms = new MainScreen();
+            ms.SetBeatmapPath("Songs/" + SelectedSongFolder + "/" + SelectedSongDifficulty + ".osu");
             noobOsuGame.INSTANCE.ScreenStack.Push(ms);
         }
 

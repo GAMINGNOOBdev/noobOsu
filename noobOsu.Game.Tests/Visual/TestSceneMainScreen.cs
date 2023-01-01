@@ -13,7 +13,9 @@ namespace noobOsu.Game.Tests.Visual
 
         public TestSceneMainScreen()
         {
-            Add(new ScreenStack( new MainScreen(){ RelativeSizeAxes = Axes.Both } ));
+            MainScreen ms = new MainScreen(){ RelativeSizeAxes = Axes.Both };
+            ms.SetBeatmapPath("Songs/mytestmap/mytestmap.osu");
+            Add(new ScreenStack( ms ));
         }
     }
 }

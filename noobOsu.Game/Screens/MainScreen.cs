@@ -1,6 +1,7 @@
 using osuTK;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Screens;
+using osu.Framework.Logging;
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
 using osu.Framework.Graphics.Containers;
@@ -15,17 +16,27 @@ namespace noobOsu.Game.Screens
         private DrawableBeatmap drawableBeatmap;
         private string beatmapPath;
 
-        public MainScreen(string path = "Songs/mytestmap/mytestmap.osu")
+        public MainScreen()
         {
             if (INSTANCE != null) return;
             INSTANCE = this;
+        }
 
-            beatmapPath = path;
+        public void SetBeatmapPath(string path)
+        {
+            if (path != null)
+            {
+                beatmapPath = path;
+            }
         }
 
         [BackgroundDependencyLoader]
         private void load()
         {
+            if (beatmapPath == null)
+            {
+                throw new System.Exception("beatmap path not specified");
+            }
             contents.Strategy = DrawSizePreservationStrategy.Minimum;
             contents.TargetDrawSize = new Vector2(640, 513);
             AddInternal(contents);
@@ -46,6 +57,14 @@ namespace noobOsu.Game.Screens
         protected override void Update()
         {
             drawableBeatmap?.Update();
+        }
+
+        protected override void OnKeyUp(KeyUpEvent e)
+        {
+            if (e.ControlPressed && e.Key == osuTK.Input.Key.Q)
+            {
+                this.Exit();
+            }
         }
 
         protected override void Dispose(bool isDisposing)
