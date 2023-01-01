@@ -63,7 +63,7 @@ namespace noobOsu.Game.HitObjects
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Scale = new Vector2(4f),
-                Texture = textures.Get("Skins/default/approachcircle.png"),
+                Texture = textures.Get("approachcircle"),
             };
             approachCircle.Size = new Vector2(radius*2);
             approachCircle.Colour = Color;
@@ -73,7 +73,7 @@ namespace noobOsu.Game.HitObjects
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Scale = new Vector2(1f),
-                Texture = textures.Get("Skins/default/hitcircle.png"),
+                Texture = textures.Get("hitcircle"),
             };
             hitcircleArea.Size = new Vector2(radius*2);
             hitcircleArea.Colour = Color;
@@ -84,7 +84,7 @@ namespace noobOsu.Game.HitObjects
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Scale = new Vector2(1f),
-                Texture = textures.Get("Skins/default/hitcircleoverlay.png"),
+                Texture = textures.Get("hitcircleoverlay"),
             };
             hitcircleOverlay.Size = new Vector2(radius*2);
 
