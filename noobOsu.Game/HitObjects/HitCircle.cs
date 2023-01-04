@@ -1,10 +1,9 @@
-using osu.Framework.Allocation;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 using osuTK;
-
+using noobOsu.Game.Skins;
 using noobOsu.Game.Beatmaps;
+using osu.Framework.Graphics;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics.Sprites;
 using noobOsu.Game.HitObjects.Drawables;
 
 namespace noobOsu.Game.HitObjects
@@ -17,7 +16,7 @@ namespace noobOsu.Game.HitObjects
         private float waitingTime, currentDelayTime, hitWindow;
         private bool ending = false;
 
-        public HitCircle(HitObject hitObj, IBeatmap beatmap, IBeatmapDifficulty difficulty, BeatmapColors colors) : base(hitObj, colors, beatmap)
+        public HitCircle(HitObject hitObj, IBeatmap beatmap, IBeatmapDifficulty difficulty, IColorStore colors) : base(hitObj, colors, beatmap)
         {
             radius = 64f * ((1.0f - 0.7f * (difficulty.CS - 5f) / 5f) / 2f);
 
@@ -39,37 +38,36 @@ namespace noobOsu.Game.HitObjects
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load()
         {
             approachCircle = new Sprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Scale = new Vector2(4f),
-                Texture = textures.Get("approachcircle"),
+                Size = new Vector2(1f),
             };
-            approachCircle.Size = new Vector2(radius*2);
+            approachCircle.Scale = new Vector2(radius*2 * 4f);
             approachCircle.Colour = Color;
+            AddProperty(new SkinnableTextureProperty(approachCircle, "approachcircle.png"));
 
             hitcircleArea = new Sprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Scale = new Vector2(1f),
-                Texture = textures.Get("hitcircle"),
+                Size = new Vector2(1f),
             };
-            hitcircleArea.Size = new Vector2(radius*2);
+            hitcircleArea.Scale = new Vector2(radius*2);
             hitcircleArea.Colour = Color;
-            
+            AddProperty(new SkinnableTextureProperty(hitcircleArea, "hitcircle.png"));
 
             hitcircleOverlay = new Sprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Scale = new Vector2(1f),
-                Texture = textures.Get("hitcircleoverlay"),
+                Size = new Vector2(1f),
             };
-            hitcircleOverlay.Size = new Vector2(radius*2);
+            hitcircleOverlay.Scale = new Vector2(radius*2);
+            AddProperty(new SkinnableTextureProperty(hitcircleOverlay, "hitcircleoverlay.png"));
 
 
             hitcircleArea.Alpha = 0f;
@@ -91,7 +89,7 @@ namespace noobOsu.Game.HitObjects
             if (started) return;
             started = true;
             startApproach = true;
-            approachCircle.ScaleTo(1, totalVisibleTime);
+            approachCircle.ScaleTo(radius*2, totalVisibleTime);
 
             approachCircle.FadeInFromZero(fadeTime);
             hitcircleArea.FadeInFromZero(fadeTime);
@@ -105,7 +103,8 @@ namespace noobOsu.Game.HitObjects
             
             hitcircleArea.FadeOutFromOne(200);
             hitcircleOverlay.FadeOutFromOne(200);
-            hitcircleOverlay.ScaleTo(1.5f, 200);
+            hitcircleArea.ScaleTo(radius*2 * 1.5f, 200);
+            hitcircleOverlay.ScaleTo(radius*2 * 1.5f, 200);
             approachCircle.Alpha = 0f;
         }
 

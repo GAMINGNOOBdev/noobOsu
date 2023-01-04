@@ -1,5 +1,7 @@
-using System.Collections.Generic;
 using osuTK;
+using System;
+using noobOsu.Game.Util;
+using System.Collections.Generic;
 
 namespace noobOsu.Game.HitObjects
 {
@@ -19,10 +21,25 @@ namespace noobOsu.Game.HitObjects
 
         public Vector2 GetStartPosition() => StartPosition;
 
+        public Vector2 GetLastPoint() => pathPoints[pathPoints.Count-1].Position;
+
         public HitObjectPath(HitObject parent)
         {
             Parent = parent;
             currentSubPath = new SubPath();
+        }
+
+        
+        public float GetLastAngle()
+        {
+            Vector2 a = pathPoints[pathPoints.Count-2].Position;
+            Vector2 b = GetLastPoint();
+
+            float angle = (float)MathHelper.RadiansToDegrees(Math.Acos((double)(Vector2.Dot(a, b) / ( VectorUtil.Magnitude(a) * VectorUtil.Magnitude(b) ))));
+
+            if (float.IsNaN(angle))
+                return 0;
+            return angle;
         }
 
         public void AddAnchorPoint(string p)

@@ -1,10 +1,12 @@
 using osuTK;
+using noobOsu.Game.Skins;
 using osu.Framework.Audio;
 using osu.Framework.Logging;
 using osu.Framework.Threading;
 using noobOsu.Game.HitObjects;
 using osu.Framework.Audio.Track;
 using System.Collections.Generic;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Containers;
 using noobOsu.Game.HitObjects.Drawables;
 
@@ -71,15 +73,23 @@ namespace noobOsu.Game.Beatmaps
             beatmap.Dispose();
         }
 
-        public void Load(AudioManager audioManager)
+        public void Load(AudioManager audioManager, TextureStore Textures)
         {
             Logger.Log("loading beatmap objects");
             if (audioManager != null)
             {
-                beatmap.Load(audioManager);
+                beatmap.Load(audioManager, null);
                 if (beatmap.MapAudio != null)
                     AddInternal(beatmap.MapAudio);
             }
+
+            IColorStore Colors; 
+            if (!Settings.GameSettings.INSTANCE.UseBeatmapColors.Value)
+            {
+                Colors = Settings.GameSettings.GetCurrentSkin().Colors.SkinComboColors;
+            }
+            else
+                Colors = beatmap.GetInfo().Colors;
 
             DrawableHitObject obj;
             for (int i = 0; i < beatmap.HitObjects.Count; i++)
@@ -87,16 +97,18 @@ namespace noobOsu.Game.Beatmaps
                 obj = null;
                 if (beatmap.HitObjects[i].isCircle())
                 {
-                    drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, beatmap.GetInfo().Colors));
+                    drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
                 }
                 if (beatmap.HitObjects[i].isSlider())
                 {
-                    drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, beatmap.GetInfo().Colors));
-                    //drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, beatmap.GetInfo().Colors));
+                    drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
+                    //drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
                 }
 
                 if (obj != null) draw_container.Add(obj);
             }
+
+            Settings.GameSettings.GetCurrentSkin().ResolveSkinnables(drawableObjects, Textures);
 
             Logger.Log("added " + drawableObjects.Count + " objects to the scene");
         }

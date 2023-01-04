@@ -17,6 +17,7 @@ namespace noobOsu.Game.Stores
         public void Dispose() {
             foreach (Stream file in filestreams)
             {
+                file.Dispose();
                 file.Close();
             }
         }

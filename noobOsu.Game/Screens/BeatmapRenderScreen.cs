@@ -4,19 +4,20 @@ using osu.Framework.Screens;
 using osu.Framework.Logging;
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
+using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Containers;
 
 namespace noobOsu.Game.Screens
 {
-    public partial class MainScreen : Screen
+    public partial class BeatmapRenderScreen : Screen
     {
-        public static MainScreen INSTANCE { get; private set; }
+        public static BeatmapRenderScreen INSTANCE { get; private set; }
         private readonly DrawSizePreservingFillContainer contents = new DrawSizePreservingFillContainer();
         private Beatmap beatmap;
         private DrawableBeatmap drawableBeatmap;
         private string beatmapPath;
 
-        public MainScreen()
+        public BeatmapRenderScreen()
         {
             if (INSTANCE != null) return;
             INSTANCE = this;
@@ -31,7 +32,7 @@ namespace noobOsu.Game.Screens
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(TextureStore textures)
         {
             if (beatmapPath == null)
             {
@@ -44,7 +45,7 @@ namespace noobOsu.Game.Screens
             beatmap = new Beatmap(beatmapPath);
             drawableBeatmap = new DrawableBeatmap(beatmap);
             drawableBeatmap.SetDrawContainer(contents);
-            drawableBeatmap.Load(noobOsuAudioManager.INSTANCE);
+            drawableBeatmap.Load(noobOsuAudioManager.INSTANCE, textures);
 
             drawableBeatmap.StartBeatmap(Scheduler);
         }
@@ -72,12 +73,6 @@ namespace noobOsu.Game.Screens
             base.Dispose(isDisposing);
 
             drawableBeatmap.Dispose();
-        }
-
-        private void ChangeBeatmap(string beatmapName)
-        {
-            drawableBeatmap.LoadBeatmap(beatmapName);
-            drawableBeatmap.Load(noobOsuAudioManager.INSTANCE);
         }
     }
 }

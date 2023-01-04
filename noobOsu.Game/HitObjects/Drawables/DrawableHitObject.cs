@@ -1,19 +1,23 @@
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Colour;
-using noobOsu.Game.Beatmaps.Timing;
+using osuTK.Graphics;
+using noobOsu.Game.Skins;
 using noobOsu.Game.Beatmaps;
+using System.Collections.Generic;
+using noobOsu.Game.Beatmaps.Timing;
+using osu.Framework.Graphics.Containers;
+using Logger = osu.Framework.Logging.Logger;
 
 namespace noobOsu.Game.HitObjects.Drawables
 {
-    public partial class DrawableHitObject : CompositeDrawable
+    public partial class DrawableHitObject : CompositeDrawable, ISkinnable
     {
         private TimingPoint timingPoint;
-        protected HitObject HitObject { get; private set; } = null;
-        protected ColourInfo Color { get; private set; } = new ColourInfo();
-        protected readonly IBeatmap ParentMap;
-        protected ITimingPoint TimingInfo => timingPoint;
+        protected Skinnable _skinnable = new Skinnable();
+        public HitObject HitObject { get; private set; } = null;
+        public Color4 Color { get; private set; } = new Color4();
+        public readonly IBeatmap ParentMap;
+        public ITimingPoint TimingInfo => timingPoint;
 
-        protected DrawableHitObject(HitObject hitObj, BeatmapColors colors, IBeatmap beatmap)
+        protected DrawableHitObject(HitObject hitObj, IColorStore colors, IBeatmap beatmap)
         {
             if (hitObj.isNewCombo()) colors.NextColor();
             HitObject = hitObj;
@@ -31,7 +35,10 @@ namespace noobOsu.Game.HitObjects.Drawables
                 timingPoint = null;
             }
             else
-                timingPoint = (TimingPoint)timingPoint.Clone();
+                if (timingPoint.BeatLength.Equals(float.NaN))
+                    timingPoint = null;
+                else
+                    timingPoint = (TimingPoint)timingPoint.Clone();
 
             ParentMap = beatmap;
 
@@ -41,5 +48,20 @@ namespace noobOsu.Game.HitObjects.Drawables
         public virtual void End() {}
 
         public virtual void DisposeResources() {}
+
+        public void AddProperty(ISkinnableProperty property)
+        {
+            _skinnable.AddProperty(property);
+        }
+
+        public List<ISkinnableProperty> GetProperties()
+        {
+            return _skinnable.GetProperties();
+        }
+
+        public void ResetResolvedProperties()
+        {
+            _skinnable.ResetResolvedProperties();
+        }
     }
 }

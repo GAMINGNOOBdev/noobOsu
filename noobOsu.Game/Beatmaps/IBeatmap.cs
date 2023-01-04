@@ -1,6 +1,8 @@
+using noobOsu.Game.Skins;
 using osu.Framework.Audio;
 using osu.Framework.Threading;
 using osu.Framework.Audio.Track;
+using osu.Framework.Graphics.Textures;
 using noobOsu.Game.HitObjects.Drawables;
 
 namespace noobOsu.Game.Beatmaps
@@ -16,7 +18,7 @@ namespace noobOsu.Game.Beatmaps
         BeatmapInfo GetInfo();
 
         void LoadBeatmap(string path);
-        void Load(AudioManager audioManager);
+        void Load(AudioManager audioManager, TextureStore Textures);
 
         Track GetAudio();
         void ClearData();

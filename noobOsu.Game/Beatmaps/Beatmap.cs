@@ -7,6 +7,7 @@ using osu.Framework.Audio.Track;
 using System.Collections.Generic;
 using osu.Framework.Graphics.Audio;
 using noobOsu.Game.Beatmaps.Timing;
+using osu.Framework.Graphics.Textures;
 using noobOsu.Game.HitObjects.Drawables;
 
 namespace noobOsu.Game.Beatmaps
@@ -40,7 +41,7 @@ namespace noobOsu.Game.Beatmaps
             ReadBeatmap(path);
         }
 
-        public void Load(AudioManager audioManager)
+        public void Load(AudioManager audioManager, TextureStore Textures)
         {
             if (relative_path == null) return;
             if (!relative_path.StartsWith("Songs/"))
@@ -150,6 +151,7 @@ namespace noobOsu.Game.Beatmaps
             {
                 if (line.Equals(string.Empty)) break;
                 if (line.StartsWith("//")) continue;
+                line = Util.StringUtil.RemoveComments(line);
 
                 values = line.Split(": ");
                 
@@ -168,6 +170,7 @@ namespace noobOsu.Game.Beatmaps
             {
                 if (line.Equals(string.Empty)) break;
                 if (line.StartsWith("//")) continue;
+                line = Util.StringUtil.RemoveComments(line);
             }
         }
 
@@ -179,6 +182,7 @@ namespace noobOsu.Game.Beatmaps
             {
                 if (line.Equals(string.Empty)) break;
                 if (line.StartsWith("//")) continue;
+                line = Util.StringUtil.RemoveComments(line);
                 info.Events.AddEvent(line);
             }
         }
@@ -192,6 +196,7 @@ namespace noobOsu.Game.Beatmaps
             {
                 if (line.Equals(string.Empty)) break;
                 if (line.StartsWith("//")) continue;
+                line = Util.StringUtil.RemoveComments(line);
 
                 values = line.Split(":");
 
@@ -230,6 +235,7 @@ namespace noobOsu.Game.Beatmaps
             {
                 if (line.Equals(string.Empty)) break;
                 if (line.StartsWith("//")) continue;
+                line = Util.StringUtil.RemoveComments(line);
 
                 info.Timing.AddTimingPoint(new TimingPoint(line));
             }
@@ -245,6 +251,7 @@ namespace noobOsu.Game.Beatmaps
             {
                 if (line.Equals(string.Empty)) break;
                 if (line.StartsWith("//")) continue;
+                line = Util.StringUtil.RemoveComments(line);
 
                 values = line.Split(" : ");
                 if (values[0].StartsWith("Combo"))
@@ -262,6 +269,7 @@ namespace noobOsu.Game.Beatmaps
             {
                 if (line.Equals(string.Empty)) break;
                 if (line.StartsWith("//")) continue;
+                line = Util.StringUtil.RemoveComments(line);
 
                 hitObjects.Add( new HitObject(line) );
             }

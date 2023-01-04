@@ -1,26 +1,31 @@
-using osu.Framework.Allocation;
+using osuTK;
+using osuTK.Graphics;
+using noobOsu.Game.Skins;
+using noobOsu.Game.Beatmaps;
+using osu.Framework.Logging;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Lines;
+using osu.Framework.Bindables;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osuTK;
-using noobOsu.Game.Beatmaps;
 using noobOsu.Game.HitObjects.Drawables;
-using osuTK.Graphics;
 
 namespace noobOsu.Game.HitObjects
 {
     public partial class Slider : DrawableHitObject
     {
-        private Sprite approachCircle, hitcircleArea, hitcircleOverlay;
-        private SmoothPath path;
+        private SliderStartCircle sliderStart;
+        private SliderEndCircle sliderEnd;
+        //private SliderBall Ball;
+        private ColoredPath path;
         private bool startApproach, approachEnded, started, circleEnded;
         private float totalVisibleTime, fadeTime, currentTime, radius;
         private float waitingTime, currentDelayTime, hitWindow;
-        private float sliderCompletionTime;
         private bool ending = false;
+        
+        public float SliderCompletionTime;
 
-        public Slider(HitObject hitObj, IBeatmap beatmap, IBeatmapDifficulty difficulty, BeatmapColors colors) : base(hitObj, colors, beatmap)
+        public Slider(HitObject hitObj, IBeatmap beatmap, IBeatmapDifficulty difficulty, IColorStore colors) : base(hitObj, colors, beatmap)
         {
             radius = 64f * ((1.0f - 0.7f * (difficulty.CS - 5f) / 5f) / 2f);
 
@@ -30,7 +35,10 @@ namespace noobOsu.Game.HitObjects
             waitingTime = HitObject.Time - hitWindow;
 
             // add the time it takes to complete the slider to the total visible time
-            sliderCompletionTime = HitObject.SliderInformation.TotalSliderSpan / ( difficulty.SliderMultiplier * 100 * (-100/TimingInfo.BeatLength) ) * beatmap.GetInfo().Timing.BPM_At(HitObject.Time);
+            if (TimingInfo != null)
+                SliderCompletionTime = HitObject.SliderInformation.TotalSliderSpan / ( difficulty.SliderMultiplier * 100 * (-100/TimingInfo.BeatLength) ) * beatmap.GetInfo().Timing.BPM_At(HitObject.Time);
+            else
+                SliderCompletionTime = HitObject.SliderInformation.TotalSliderSpan / ( difficulty.SliderMultiplier * 100 ) * beatmap.GetInfo().Timing.BPM_At(HitObject.Time);
 
             currentTime = 0f;
             currentDelayTime = 0f;
@@ -47,56 +55,21 @@ namespace noobOsu.Game.HitObjects
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            path = new SmoothPath();
+            path = new ColoredPath();
             path.RelativeSizeAxes = Axes.None;
             path.PathRadius = radius;
             path.Vertices = HitObject.Path.GetCurvePoints();
             path.OriginPosition = path.PositionInBoundingBox(Vector2.Zero);
-
-            Vector4 color = Color.BottomLeft.ToVector();
-
-            path.Colour = new Color4(color.X, color.Y, color.Z, color.W);
             path.Alpha = 0f;
+            AddProperty(new SkinnableColorProperty(path.AccentColor, Color, "SliderTrack"));
+            AddProperty(new SkinnableColorProperty(path.BorderColor, Color4.White, "SliderBorder"));
 
-            approachCircle = new Sprite(){
-                RelativeSizeAxes = Axes.None,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Scale = new Vector2(4f),
-                Texture = textures.Get("approachcircle"),
-            };
-            approachCircle.Size = new Vector2(radius*2);
-            approachCircle.Colour = Color;
-
-            hitcircleArea = new Sprite(){
-                RelativeSizeAxes = Axes.None,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Scale = new Vector2(1f),
-                Texture = textures.Get("hitcircle"),
-            };
-            hitcircleArea.Size = new Vector2(radius*2);
-            hitcircleArea.Colour = Color;
-            
-
-            hitcircleOverlay = new Sprite(){
-                RelativeSizeAxes = Axes.None,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Scale = new Vector2(1f),
-                Texture = textures.Get("hitcircleoverlay"),
-            };
-            hitcircleOverlay.Size = new Vector2(radius*2);
-
-
-            hitcircleArea.Alpha = 0f;
-            hitcircleOverlay.Alpha = 0f;
-            approachCircle.Alpha = 0f;
+            sliderStart = new SliderStartCircle(this, HitObject.Position);
+            sliderEnd = new SliderEndCircle(this, HitObject.Path.GetLastPoint());
 
             AddInternal(path);
-            AddInternal(hitcircleArea);
-            AddInternal(hitcircleOverlay);
-            AddInternal(approachCircle);
+            AddInternal(sliderStart);
+            AddInternal(sliderEnd);
         }
 
         protected override void LoadComplete()
@@ -110,20 +83,17 @@ namespace noobOsu.Game.HitObjects
             ending = true;
             
             path.FadeOutFromOne(200);
-            /*
-            Logger.Log("sliderCompletionTime = HitObject.SliderInformation.TotalSliderSpan / ( difficulty.SliderMultiplier * 100 * (-100/TimingInfo.BeatLength) ) * beatmap.GetInfo().Timing.BPM_At(HitObject.Time)");
-            Logger.Log(sliderCompletionTime + " = " + HitObject.SliderInformation.TotalSliderSpan + " / (" + ParentMap.GetInfo().Difficulty.SliderMultiplier + " * 100 * (-100/" + TimingInfo.BeatLength + ") ) * " + ParentMap.GetInfo().Timing.BPM_At(HitObject.Time));
-            Logger.Log("slider ============================== timestamp --> " + HitObject.Time + " | waitingTime --> " + waitingTime + " | totalVisibleTime --> " + totalVisibleTime + " | fadeTime -->" + fadeTime + " | hitWindow --> " + hitWindow + " ==============================");
-            Logger.Log("path: " + HitObject.Path.ToString());
-            */
+            
+            // Logger.Log("slider ============================== timestamp --> " + HitObject.Time + " | waitingTime --> " + waitingTime + " | totalVisibleTime --> " + totalVisibleTime + " | fadeTime -->" + fadeTime + " | hitWindow --> " + hitWindow + " ==============================");
+            // Logger.Log("path: " + HitObject.Path.ToString());
+            // Logger.Log("AccentColor.Value: " + path.AccentColor.Value);
         }
 
         public override void DisposeResources()
         {
             path.Dispose();
-            hitcircleArea.Dispose();
-            hitcircleOverlay.Dispose();
-            approachCircle.Dispose();
+            sliderStart.DisposeResources();
+            sliderEnd.DisposeResources();
         }
 
         public void Start() {
@@ -133,10 +103,11 @@ namespace noobOsu.Game.HitObjects
             
             path.FadeInFromZero(fadeTime);
 
-            approachCircle.ScaleTo(1, totalVisibleTime);
-            approachCircle.FadeInFromZero(fadeTime);
-            hitcircleArea.FadeInFromZero(fadeTime);
-            hitcircleOverlay.FadeInFromZero(fadeTime);
+            sliderStart.Start();
+            sliderEnd.Start();
+
+            //Logger.Log("sliderCompletionTime = HitObject.SliderInformation.TotalSliderSpan / ( difficulty.SliderMultiplier * 100 * (-100/TimingInfo.BeatLength) ) * beatmap.GetInfo().Timing.BPM_At(HitObject.Time)");
+            //Logger.Log(sliderCompletionTime + " = " + HitObject.SliderInformation.TotalSliderSpan + " / (" + ParentMap.GetInfo().Difficulty.SliderMultiplier + " * 100 * (-100/" + TimingInfo.BeatLength + ") ) * " + ParentMap.GetInfo().Timing.BPM_At(HitObject.Time));
         }
 
         protected override void Update()
@@ -165,17 +136,17 @@ namespace noobOsu.Game.HitObjects
                     approachEnded = true;
                     currentTime = 0f;
 
-                    hitcircleArea.FadeOutFromOne(200);
-                    hitcircleOverlay.FadeOutFromOne(200);
-                    hitcircleOverlay.ScaleTo(1.5f, 200);
-                    approachCircle.Alpha = 0f;
+                    sliderStart.End();
+                    sliderEnd.End();
                 }
+
+                //Ball.Update();
             }
 
             if (approachEnded)
             {
                 currentTime += (float)Clock.ElapsedFrameTime;
-                if (currentTime >= hitWindow + sliderCompletionTime - fadeTime)
+                if (currentTime >= hitWindow + SliderCompletionTime - fadeTime)
                 {
                     circleEnded = true;
                     ParentMap.RemoveObject(this);

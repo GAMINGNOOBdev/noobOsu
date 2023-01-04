@@ -1,3 +1,4 @@
+using noobOsu.Game.Skins;
 using noobOsu.Game.Beatmaps.Timing;
 
 namespace noobOsu.Game.Beatmaps
@@ -11,7 +12,7 @@ namespace noobOsu.Game.Beatmaps
         BeatmapMetadata Metadata { get; }
 
         // beatmap colors
-        BeatmapColors Colors { get; }
+        IColorStore Colors { get; }
 
         // beatmap timing points
         BeatmapTiming Timing { get; }

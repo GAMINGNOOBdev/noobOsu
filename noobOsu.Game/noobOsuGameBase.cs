@@ -1,10 +1,11 @@
-using osu.Framework.Allocation;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.IO.Stores;
 using osuTK;
 using noobOsu.Resources;
 using noobOsu.Game.Stores;
+using noobOsu.Game.Settings;
+using osu.Framework.Graphics;
+using osu.Framework.IO.Stores;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics.Containers;
 
 namespace noobOsu.Game
 {
@@ -15,6 +16,7 @@ namespace noobOsu.Game
         private ExternalAssetStore ExternalSongTracks, ExternalSongSamples;
         private ResourceStore<byte[]> tracksContianer, samplesContainer;
         private noobOsuAudioManager clientAudioManager;
+        private GameSettings Settings;
 
         protected noobOsuGameBase()
         {
@@ -22,6 +24,8 @@ namespace noobOsu.Game
             {
                 TargetDrawSize = new Vector2(1366, 768)
             });
+
+            Settings = new GameSettings();
         }
 
         [BackgroundDependencyLoader]
@@ -40,7 +44,15 @@ namespace noobOsu.Game
 
             clientAudioManager = new noobOsuAudioManager(Host.AudioThread, tracksContianer, samplesContainer);
 
+            Textures.AddTextureSource(new ExternalTextureStore());
+
             Host.Window.Title = "noobOsu";
+        }
+
+        protected override bool OnExiting()
+        {
+            Settings.Dispose();
+            return base.OnExiting();
         }
     }
 }
