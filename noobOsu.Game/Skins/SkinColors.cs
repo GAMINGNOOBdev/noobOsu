@@ -14,7 +14,7 @@ namespace noobOsu.Game.Skins
         Color4 MenuGlow { get; }
 
         // slider ball color
-        Color4 SliderBall { get; }
+        Color4? SliderBall { get; }
 
         // slider border color
         Color4 SliderBorder { get; }
@@ -36,7 +36,7 @@ namespace noobOsu.Game.Skins
 
         // parse info from a string
         void AddColorInfo(string info);
-        Color4 GetColorFor(string name);
+        Color4? GetColorFor(string name);
     }
 
     public class SkinColors : ISkinColors
@@ -44,13 +44,20 @@ namespace noobOsu.Game.Skins
         public IColorStore SkinComboColors { get; private set; } = new ColorStore();
         public Color4 InputOverlayText { get; set; } = new Color4(0, 0, 0, 1);
         public Color4 MenuGlow { get; set; } = new Color4(0, 78/255, 155/255, 1);
-        public Color4 SliderBall { get; set; } = new Color4(2/255, 170/255, 1, 1);
+        public Color4? SliderBall { get; set; } = null;
         public Color4 SliderBorder { get; set; } = Color4.White;
         public Color4 SliderTrackOverride { get; set; }
         public Color4 SongSelectActiveText { get; set; } = Color4.Black;
         public Color4 SongSelectInactiveText { get; set; } = Color4.White;
         public Color4 SpinnerBackground { get; set; } = new Color4(100/255, 100/255, 100/255, 1);
         public Color4 StarBreakAdditive { get; set; } = new Color4(1, 182/255, 193/255, 1);
+
+        private Skin Parent;
+
+        public SkinColors(Skin p)
+        {
+            Parent = p;
+        }
 
         public void AddColorInfo(string info)
         {
@@ -100,7 +107,7 @@ namespace noobOsu.Game.Skins
             }
         }
 
-        public Color4 GetColorFor(string name)
+        public Color4? GetColorFor(string name)
         {
             if (name.Equals("InputOverlayText"))
             {
@@ -112,7 +119,10 @@ namespace noobOsu.Game.Skins
             }
             if (name.Equals("SliderBall"))
             {
-                return SliderBall;
+                if (Parent.General.AllowSliderBallTint)
+                    return SliderBall;
+                else
+                    return null;
             }
             if (name.Equals("SliderBorder"))
             {
@@ -138,7 +148,7 @@ namespace noobOsu.Game.Skins
             {
                 return StarBreakAdditive;
             }
-            return Color4.White;
+            return null;
         }
     }
 }

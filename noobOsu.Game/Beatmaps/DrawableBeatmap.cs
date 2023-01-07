@@ -83,13 +83,11 @@ namespace noobOsu.Game.Beatmaps
                     AddInternal(beatmap.MapAudio);
             }
 
-            IColorStore Colors; 
-            if (!Settings.GameSettings.INSTANCE.UseBeatmapColors.Value)
+            IColorStore Colors = Settings.GameSettings.GetCurrentSkin().Colors.SkinComboColors; 
+            if (Settings.GameSettings.INSTANCE.UseBeatmapColors.Value && beatmap.GetInfo().Colors != null)
             {
-                Colors = Settings.GameSettings.GetCurrentSkin().Colors.SkinComboColors;
-            }
-            else
                 Colors = beatmap.GetInfo().Colors;
+            }
 
             DrawableHitObject obj;
             for (int i = 0; i < beatmap.HitObjects.Count; i++)

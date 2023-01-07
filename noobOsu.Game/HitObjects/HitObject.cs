@@ -1,4 +1,6 @@
 using osuTK;
+using noobOsu.Game.Beatmaps;
+using noobOsu.Game.Beatmaps.Timing;
 
 namespace noobOsu.Game.HitObjects
 {
@@ -11,12 +13,14 @@ namespace noobOsu.Game.HitObjects
         public Vector2 RawPosition { get; private set; }
 
         public int Time { get; private set; } = 0;
+        public int EndTime { get; private set; } = 0;
         public int Type { get; private set; } = 0;
         public int HitSound { get; private set; } = 0;
 
         public Vector3 Color { get; } = new Vector3(1f);
 
         public int ComboColorSkip { get; private set; } = 0;
+        public ITimingPoint Timing { get; private set; }
 
         private readonly SliderInfo sliderInfo = new SliderInfo();
         public ISliderInfo SliderInformation => sliderInfo;
@@ -62,9 +66,19 @@ namespace noobOsu.Game.HitObjects
             return (Type & (1 << 2)) > 0;
         }
 
+        public void setSliderInfo(IBeatmap beatmap, ITimingPoint timing)
+        {
+            Timing = timing;
+
+            if (Timing != null)
+                EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * (float)Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier * (-100/Timing.BeatLength)) * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+            else
+                EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * (float)Path.GetLength() / beatmap.GetInfo().Difficulty.SliderMultiplier * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+        }
+
         private void ParseSliderInfo(string[] object_values)
         {
-            sliderInfo.SlideRepeat = int.Parse(object_values[6]);
+            sliderInfo.SlideRepeat = int.Parse(object_values[6])-1;
             sliderInfo.Length = float.Parse(object_values[7]);
 
             string[] curveInfo = object_values[5].Split('|');
@@ -79,9 +93,9 @@ namespace noobOsu.Game.HitObjects
             Path.FinishPath();
 
             if (sliderInfo.SlideRepeat > 0)
-                sliderInfo.TotalSliderSpan = sliderInfo.Length * sliderInfo.SlideRepeat;
+                sliderInfo.TotalSliderSpan = (float)Path.GetLength() * sliderInfo.SlideRepeat;
             else
-                sliderInfo.TotalSliderSpan = sliderInfo.Length;
+                sliderInfo.TotalSliderSpan = (float)Path.GetLength();
         }
     }
 }

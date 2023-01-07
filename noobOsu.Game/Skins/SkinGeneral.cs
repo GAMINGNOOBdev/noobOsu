@@ -79,6 +79,13 @@ namespace noobOsu.Game.Skins
         public bool SpinnerFrequencyModulate { get; private set; } = true;
         public bool SpinnerNoBlink { get; private set; } = false;
 
+        private Skin Parent;
+
+        public SkinGeneral(Skin p)
+        {
+            Parent = p;
+        }
+
         public void AddGeneralInfo(string info)
         {
             string[] splitInfo = info.Split(": ");

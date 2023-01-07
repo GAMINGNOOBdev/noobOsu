@@ -16,7 +16,7 @@ namespace noobOsu.Game.Skins
 
         static ISkinGeneral LoadSkinInfo(string path)
         {
-            ISkinGeneral general = new SkinGeneral();
+            ISkinGeneral general = new SkinGeneral(null);
 
             StreamReader file = new StreamReader(path);
             string line;

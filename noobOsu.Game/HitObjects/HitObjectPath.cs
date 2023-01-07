@@ -1,6 +1,7 @@
 using osuTK;
 using System;
 using noobOsu.Game.Util;
+using osu.Framework.Utils;
 using System.Collections.Generic;
 
 namespace noobOsu.Game.HitObjects
@@ -8,12 +9,15 @@ namespace noobOsu.Game.HitObjects
     public class HitObjectPath
     {
         private readonly List<Vector2> calculatedCurvePoints = new List<Vector2>();
+        private readonly List<double> calculatedCurvePointLengths = new List<double>();
         private readonly List<PathPoint> pathPoints = new List<PathPoint>();
         private readonly List<SubPath> subPaths = new List<SubPath>();
         private SubPath currentSubPath;
         private bool PathFinished = false;
         private readonly HitObject Parent;
         private Vector2 StartPosition = new Vector2(0);
+
+        public double CalculatedLength{ get; private set; }
 
         public List<PathPoint> CurvePoints { get{ return pathPoints; } }
 
@@ -27,19 +31,17 @@ namespace noobOsu.Game.HitObjects
         {
             Parent = parent;
             currentSubPath = new SubPath();
+            calculatedCurvePointLengths.Add(0);
         }
 
         
         public float GetLastAngle()
         {
-            Vector2 a = pathPoints[pathPoints.Count-2].Position;
-            Vector2 b = GetLastPoint();
-
-            float angle = (float)MathHelper.RadiansToDegrees(Math.Acos((double)(Vector2.Dot(a, b) / ( VectorUtil.Magnitude(a) * VectorUtil.Magnitude(b) ))));
-
-            if (float.IsNaN(angle))
+            if (pathPoints.Count < 2)
+            {
                 return 0;
-            return angle;
+            }
+            return (float)VectorUtil.GetAngleBetween(pathPoints[pathPoints.Count-2].Position, GetLastPoint());
         }
 
         public void AddAnchorPoint(string p)
@@ -98,23 +100,36 @@ namespace noobOsu.Game.HitObjects
             currentSubPath.AddPathPoint(pathPoint);
         }
 
-        public IReadOnlyList<Vector2> GetCurvePoints()
+        public Vector2 GetProgressPoint(double progress)
         {
-            if (calculatedCurvePoints.Count > 0) return calculatedCurvePoints;
-
-            for (int i = 0; i < subPaths.Count; i++)
-            {
-                calculatedCurvePoints.AddRange( subPaths[i].GetCurvePoints(Parent.SliderInformation.CurveType) );
-            }
-
-            return calculatedCurvePoints;
+            double p = Math.Clamp(progress, 0, 1) * Parent.Path.GetLength();
+            return interpolate(IndexOfLength(p), p);
         }
+
+        public IReadOnlyList<Vector2> GetCurvePoints() => calculatedCurvePoints;
 
         public void FinishPath()
         {
             PathFinished = true;
             subPaths.Add(currentSubPath);
+
+            // calculate all vertices when finishing the path
+
+            // calculate the curve vertices
+            for (int i = 0; i < subPaths.Count; i++)
+            {
+                calculatedCurvePoints.AddRange( subPaths[i].GetCurvePoints(Parent.SliderInformation.CurveType) );
+            }
+
+            // also calculate the distances between each vertex and the origin
+            for (int i = 0; i < calculatedCurvePoints.Count-1; i++)
+            {
+                CalculatedLength += (calculatedCurvePoints[i+1] - calculatedCurvePoints[i]).Length;
+                calculatedCurvePointLengths.Add(CalculatedLength);
+            }
         }
+
+        public double GetLength() => calculatedCurvePointLengths[^1];
 
         public override string ToString()
         {
@@ -143,15 +158,31 @@ namespace noobOsu.Game.HitObjects
             return result;
         }
 
-        private static string ListToString<T>(List<T> list)
+        private int IndexOfLength(double len)
         {
-            string result = "List{ ";
-            foreach (T t in list)
-            {
-                result += t.ToString() + " | ";
-            }
-            result += " }";
-            return result;
+            int idx = calculatedCurvePointLengths.BinarySearch(len);
+            return idx < 0 ? ~idx : idx;
+        }
+
+        private Vector2 interpolate(int idx, double val)
+        {
+            if (idx <= 0)
+                return calculatedCurvePoints[0];
+            if (idx >= calculatedCurvePoints.Count)
+                return calculatedCurvePoints[calculatedCurvePoints.Count-1];
+            
+            Vector2 p, q;
+            p = calculatedCurvePoints[idx-1];
+            q = calculatedCurvePoints[idx];
+
+            double pDistance = calculatedCurvePointLengths[idx-1];
+            double qDistance = calculatedCurvePointLengths[idx];
+
+            if (Precision.AlmostEquals(pDistance, qDistance))
+                return p;
+            
+            double x = (val - pDistance) / (qDistance - pDistance);
+            return p + (q - p) * (float)x;
         }
     }
 }

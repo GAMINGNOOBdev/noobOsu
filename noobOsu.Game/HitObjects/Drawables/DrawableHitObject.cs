@@ -16,13 +16,14 @@ namespace noobOsu.Game.HitObjects.Drawables
         public Color4 Color { get; private set; } = new Color4();
         public readonly IBeatmap ParentMap;
         public ITimingPoint TimingInfo => timingPoint;
+        public float Radius { get; protected set; }
 
         protected DrawableHitObject(HitObject hitObj, IColorStore colors, IBeatmap beatmap)
         {
             if (hitObj.isNewCombo()) colors.NextColor();
             HitObject = hitObj;
             colors.Skip(HitObject.ComboColorSkip);
-            Color = colors.GetComboColor();
+            Color = (Color4)colors.GetComboColor();
 
             timingPoint = (TimingPoint)beatmap.GetInfo().Timing.GetTimingPoint(HitObject.Time, false);
             if (timingPoint == null && beatmap.GetInfo().Timing.GetTimingPoint(HitObject.Time, true) != null)
@@ -41,6 +42,9 @@ namespace noobOsu.Game.HitObjects.Drawables
                     timingPoint = (TimingPoint)timingPoint.Clone();
 
             ParentMap = beatmap;
+
+            if (HitObject.isSlider())
+                HitObject.setSliderInfo(beatmap, timingPoint);
 
             this.Depth = HitObject.Time;
         }

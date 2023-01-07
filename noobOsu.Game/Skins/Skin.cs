@@ -6,9 +6,16 @@ namespace noobOsu.Game.Skins
 {
     public class Skin : ISkin
     {
-        public ISkinGeneral General { get; private set; } = new SkinGeneral();
-        public ISkinColors Colors { get; private set; } = new SkinColors();
-        public ISkinFont Font { get; private set; } = new SkinFont();
+        public ISkinGeneral General { get; private set; }
+        public ISkinColors Colors { get; private set; }
+        public ISkinFont Font { get; private set; }
+
+        public Skin()
+        {
+            General = new SkinGeneral(this);
+            Colors = new SkinColors(this);
+            Font = new SkinFont(this);
+        }
 
         public void ResolveSkinnables(IEnumerable<ISkinnable> skinnables, TextureStore textureStore)
         {
@@ -20,10 +27,19 @@ namespace noobOsu.Game.Skins
                     {
                         case ISkinnableProperty.Type.Texture:
                         case ISkinnableProperty.Type.StaticImage:
-                            if (File.Exists("Skins/" + General.Name + "/" + property.Name))
-                                property.Resolve(textureStore.Get("Skins/" + General.Name + "/" + property.Name));
-                            else
-                                property.Resolve(textureStore.Get("Skins/default/" + property.Name));
+                            if (File.Exists("Skins/" + General.Name + "/" + property.Name + "@2x.png"))
+                            {
+                                property.SetScale(2);
+                                property.Resolve(textureStore.Get("Skins/" + General.Name + "/" + property.Name + "@2x.png"));
+                                break;
+                            }
+                            if (File.Exists("Skins/" + General.Name + "/" + property.Name + ".png"))
+                            {
+                                property.SetScale(1);
+                                property.Resolve(textureStore.Get("Skins/" + General.Name + "/" + property.Name + ".png"));
+                                break;
+                            }
+                            property.Resolve(textureStore.Get("Skins/default/" + property.Name + ".png"));
                             break;
                         
                         case ISkinnableProperty.Type.Color:

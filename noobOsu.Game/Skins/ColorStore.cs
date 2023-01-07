@@ -28,8 +28,10 @@ namespace noobOsu.Game.Skins
             CurrentColorIndex %= Colors.Count;
         }
 
-        public Color4 GetComboColor()
+        public Color4? GetComboColor()
         {
+            if (Colors.Count == 0)
+                return null;
             return Colors[CurrentColorIndex];
         }
     }

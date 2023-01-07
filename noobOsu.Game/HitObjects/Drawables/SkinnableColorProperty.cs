@@ -12,8 +12,9 @@ namespace noobOsu.Game.HitObjects.Drawables
         public SkinnableColorProperty(Bindable<Color4> col, Color4 defaultValue, string name)
         {
             PropertyType = ISkinnableProperty.Type.Color;
-            Color = new Bindable<Color4>(defaultValue);
+            Color = new Bindable<Color4>();
             Color.BindTo(col);
+            Color.Value = defaultValue;
             Name = name;
         }
 
@@ -22,10 +23,8 @@ namespace noobOsu.Game.HitObjects.Drawables
             if (Resolved) return;
             base.Resolve(obj);
 
-            if (obj == null)
-                return;
-
-            Color.Value = (Color4)obj;
+            if (obj != null)
+                Color.Value = (Color4)obj;
         }
     }
 }

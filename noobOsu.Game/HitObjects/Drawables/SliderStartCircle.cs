@@ -12,10 +12,12 @@ namespace noobOsu.Game.HitObjects
 {
     public partial class SliderStartCircle : CompositeDrawable
     {   
-        private Sprite approachCircle, hitcircleArea, hitcircleOverlay, sliderEndCircle, reverseArrow;
-        private float totalVisibleTime, fadeTime, radius;
+        private HitObjectSprite approachCircle, hitcircleArea, hitcircleOverlay, sliderEndCircle, reverseArrow;
+        private float totalVisibleTime, fadeTime;
         private float waitingTime, hitWindow;
         private Slider ParentSlider;
+
+        public float Radius { get; private set; }
         
         public bool IsReverseArrow { get; private set; }
  
@@ -23,8 +25,6 @@ namespace noobOsu.Game.HitObjects
         {
             ParentSlider = parent;
             IsReverseArrow = reverseArrow;
-            
-            radius = 64f * ((1.0f - 0.7f * (ParentSlider.ParentMap.GetInfo().Difficulty.CS - 5f) / 5f) / 2f);
 
             totalVisibleTime = BeatmapDifficulty.ScaleWithRange(ParentSlider.ParentMap.GetInfo().Difficulty.AR, 1800f, 1200f, 450f);
             fadeTime = BeatmapDifficulty.ScaleWithRange(ParentSlider.ParentMap.GetInfo().Difficulty.AR, 1200f, 800f, 300f);
@@ -40,35 +40,35 @@ namespace noobOsu.Game.HitObjects
         {
             if (!IsReverseArrow)
             {
-                approachCircle = new Sprite(){
+                approachCircle = new HitObjectSprite(){
                     RelativeSizeAxes = Axes.None,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(1f),
                 };
-                approachCircle.Scale = new Vector2(radius*2 * 4f);
+                approachCircle.Scale = new Vector2(ParentSlider.Radius*2 * 4f);
                 approachCircle.Colour = ParentSlider.Color;
-                ParentSlider.AddProperty(new SkinnableTextureProperty(approachCircle, "approachcircle.png"));
+                ParentSlider.AddProperty(new SkinnableTextureProperty(approachCircle, "approachcircle"));
 
-                hitcircleArea = new Sprite(){
+                hitcircleArea = new HitObjectSprite(){
                     RelativeSizeAxes = Axes.None,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(1f),
                 };
-                hitcircleArea.Scale = new Vector2(radius*2);
+                hitcircleArea.Scale = new Vector2(ParentSlider.Radius*2);
                 hitcircleArea.Colour = ParentSlider.Color;
-                ParentSlider.AddProperty(new SkinnableTextureProperty(hitcircleArea, "hitcircle.png"));
+                ParentSlider.AddProperty(new SkinnableTextureProperty(hitcircleArea, "hitcircle", true));
                 
 
-                hitcircleOverlay = new Sprite(){
+                hitcircleOverlay = new HitObjectSprite(){
                     RelativeSizeAxes = Axes.None,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(1f),
                 };
-                hitcircleOverlay.Scale = new Vector2(radius*2);
-                ParentSlider.AddProperty(new SkinnableTextureProperty(hitcircleOverlay, "hitcircleoverlay.png"));
+                hitcircleOverlay.Scale = new Vector2(ParentSlider.Radius*2);
+                ParentSlider.AddProperty(new SkinnableTextureProperty(hitcircleOverlay, "hitcircleoverlay"));
 
 
                 hitcircleArea.Alpha = 0f;
@@ -81,23 +81,23 @@ namespace noobOsu.Game.HitObjects
             }
             else
             {
-                sliderEndCircle = new Sprite(){
+                sliderEndCircle = new HitObjectSprite(){
                     RelativeSizeAxes = Axes.None,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(1f),
                 };
-                sliderEndCircle.Scale = new Vector2(radius*2);
-                ParentSlider.AddProperty(new SkinnableTextureProperty(sliderEndCircle, "sliderendcircle.png"));
+                sliderEndCircle.Scale = new Vector2(ParentSlider.Radius*2);
+                ParentSlider.AddProperty(new SkinnableTextureProperty(sliderEndCircle, "sliderendcircle"));
 
-                reverseArrow = new Sprite(){
+                reverseArrow = new HitObjectSprite(){
                     RelativeSizeAxes = Axes.None,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(1f),
                 };
-                reverseArrow.Scale = new Vector2(radius*2);
-                ParentSlider.AddProperty(new SkinnableTextureProperty(reverseArrow, "reversearrow.png"));
+                reverseArrow.Scale = new Vector2(ParentSlider.Radius*2);
+                ParentSlider.AddProperty(new SkinnableTextureProperty(reverseArrow, "reversearrow"));
 
                 sliderEndCircle.Alpha = 0f;
                 reverseArrow.Alpha = 0f;
@@ -114,7 +114,7 @@ namespace noobOsu.Game.HitObjects
         {
             if (!IsReverseArrow)
             {
-                approachCircle.ScaleTo(radius*2, totalVisibleTime);
+                approachCircle.ScaleTo(ParentSlider.Radius*2 * approachCircle.ScaleFactor, totalVisibleTime);
                 approachCircle.FadeInFromZero(fadeTime);
                 hitcircleArea.FadeInFromZero(fadeTime);
                 hitcircleOverlay.FadeInFromZero(fadeTime);
@@ -132,8 +132,8 @@ namespace noobOsu.Game.HitObjects
             {
                 hitcircleArea.FadeOutFromOne(200);
                 hitcircleOverlay.FadeOutFromOne(200);
-                hitcircleArea.ScaleTo(radius*2 * 1.5f, 200);
-                hitcircleOverlay.ScaleTo(radius*2 * 1.5f, 200);
+                hitcircleArea.ScaleTo(ParentSlider.Radius*2 * 1.5f * hitcircleArea.ScaleFactor, 200);
+                hitcircleOverlay.ScaleTo(ParentSlider.Radius*2 * 1.5f * hitcircleOverlay.ScaleFactor, 200);
                 approachCircle.Alpha = 0f;
             }
             else

@@ -11,8 +11,8 @@ namespace noobOsu.Game.HitObjects
 
         private const float border_max = 8f;
         private const float border_min = 0f;
-        private const float opacity_centre = 0.1f;
-        private const float opacity_edge = 1f;
+        private const float opacity_centre = 0.9f;
+        private const float opacity_edge = 0.8f;
 
         private float borderSize = 1f;
 

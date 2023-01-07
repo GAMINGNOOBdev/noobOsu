@@ -38,6 +38,13 @@ namespace noobOsu.Game.Skins
 
         public int ComboOverlap { get; private set; } = 0;
 
+        private Skin Parent;
+
+        public SkinFont(Skin p)
+        {
+            Parent = p;
+        }
+
         public void AddFontInfo(string info)
         {
             string[] splitInfo = info.Split(": ");
