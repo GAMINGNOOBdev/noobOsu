@@ -1,4 +1,5 @@
 using osuTK;
+using System.Diagnostics;
 using noobOsu.Game.Beatmaps;
 using noobOsu.Game.Beatmaps.Timing;
 
@@ -71,9 +72,14 @@ namespace noobOsu.Game.HitObjects
             Timing = timing;
 
             if (Timing != null)
-                EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * (float)Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier * (-100/Timing.BeatLength)) * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+                if (Timing.BeatLength < 0)
+                    EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier * (-100/Timing.BeatLength)) * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+                else
+                    EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier) * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
             else
-                EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * (float)Path.GetLength() / beatmap.GetInfo().Difficulty.SliderMultiplier * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+                EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier) * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+            
+            CalculateRepeatTimes(beatmap, timing);
         }
 
         private void ParseSliderInfo(string[] object_values)
@@ -96,6 +102,23 @@ namespace noobOsu.Game.HitObjects
                 sliderInfo.TotalSliderSpan = (float)Path.GetLength() * sliderInfo.SlideRepeat;
             else
                 sliderInfo.TotalSliderSpan = (float)Path.GetLength();
+        }
+
+        private void CalculateRepeatTimes(IBeatmap beatmap, ITimingPoint timing)
+        {
+            int repeatTime = 0;
+            for (int repeat = 1; repeat < sliderInfo.SlideRepeat+1; repeat++)
+            {
+                if (Timing != null)
+                    if (Timing.BeatLength < 0)
+                        repeatTime = (int)((repeat) * Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier * (-100/Timing.BeatLength)) * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+                    else
+                        repeatTime = (int)((repeat) * Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier) * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+                else
+                    repeatTime = (int)((repeat) * Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier) * (beatmap.GetInfo().Timing.BPM_At(Time)/100));
+                
+                sliderInfo.RepeatTimingInfo.AddTimingPoint(repeatTime);
+            }
         }
     }
 }

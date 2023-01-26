@@ -7,7 +7,10 @@ namespace noobOsu.Game.Skins
         void AddColor(string color);
         void NextColor();
         void Skip(int amount);
-        Color4? GetComboColor();
+        Color4? GetColor();
+        void RestartColor();
+        int GetComboNumber();
+        bool IsEmpty();
         
         static Color4 FromString(string s)
         {

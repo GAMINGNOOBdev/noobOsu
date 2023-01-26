@@ -25,6 +25,7 @@ namespace noobOsu.Game.HitObjects
 
         public Vector2 GetStartPosition() => StartPosition;
 
+        public Vector2 GetFirstPoint() => pathPoints[0].Position;
         public Vector2 GetLastPoint() => pathPoints[pathPoints.Count-1].Position;
 
         public HitObjectPath(HitObject parent)
@@ -42,6 +43,15 @@ namespace noobOsu.Game.HitObjects
                 return 0;
             }
             return (float)VectorUtil.GetAngleBetween(pathPoints[pathPoints.Count-2].Position, GetLastPoint());
+        }
+
+        public float GetFirstAngle()
+        {
+            if (pathPoints.Count < 2)
+            {
+                return 0;
+            }
+            return (float)VectorUtil.GetAngleBetween(pathPoints[1].Position, pathPoints[0].Position);
         }
 
         public void AddAnchorPoint(string p)

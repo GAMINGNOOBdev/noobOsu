@@ -44,9 +44,6 @@ namespace noobOsu.Game.HitObjects
             approachEnded = false;
             circleEnded = false;
             started = false;
-
-            RelativePositionAxes = Axes.Both;
-            Position = HitObject.Position;
         }
         
         [BackgroundDependencyLoader]
@@ -87,10 +84,9 @@ namespace noobOsu.Game.HitObjects
             
             path.FadeOutFromOne(200);
             Ball.End();
-            
-            // Logger.Log("slider ============================== timestamp --> " + HitObject.Time + " | waitingTime --> " + waitingTime + " | totalVisibleTime --> " + totalVisibleTime + " | fadeTime -->" + fadeTime + " | hitWindow --> " + hitWindow + " ==============================");
-            // Logger.Log("path: " + HitObject.Path.ToString());
-            // Logger.Log("AccentColor.Value: " + path.AccentColor.Value);
+            sliderStart.End();
+            if (sliderEnd != null)
+                sliderEnd.End();
         }
 
         public override void DisposeResources()
@@ -98,6 +94,7 @@ namespace noobOsu.Game.HitObjects
             path.Dispose();
             sliderStart.DisposeResources();
             Ball.DisposeResources();
+            CircleNumbers.Dispose();
             if (sliderEnd != null)
                 sliderEnd.DisposeResources();
         }
@@ -110,6 +107,8 @@ namespace noobOsu.Game.HitObjects
             path.FadeInFromZero(fadeTime);
 
             sliderStart.Start();
+            CircleNumbers.FadeInFromZero(fadeTime);
+
             if (sliderEnd != null)
                 sliderEnd.Start();
 
@@ -117,13 +116,13 @@ namespace noobOsu.Game.HitObjects
             Logger.Log(" ======== slider info start ======== ");
             if (HitObject.Timing != null)
             {
-                Logger.Log("EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * (float)Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier * (-100/HitObject.Timing.BeatLength)))");
-                Logger.Log(HitObject.EndTime + " = " + HitObject.Time + " + (int)((" + HitObject.SliderInformation.SlideRepeat + "+1) * (float)" + HitObject.Path.GetLength() + " / (" + ParentMap.GetInfo().Difficulty.SliderMultiplier + " * (-100/" + HitObject.Timing.BeatLength + ")))");
+                Logger.Log("EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * (float)Path.GetLength() / (beatmap.GetInfo().Difficulty.SliderMultiplier * (-100/HitObject.Timing.BeatLength))) * (beatmap.GetInfo().Timing.BPM_At(Time)/100))");
+                Logger.Log(HitObject.EndTime + " = " + HitObject.Time + " + (int)((" + HitObject.SliderInformation.SlideRepeat + "+1) * (float)" + HitObject.Path.GetLength() + " / (" + ParentMap.GetInfo().Difficulty.SliderMultiplier + " * (-100/" + HitObject.Timing.BeatLength + "))) * (" + ParentMap.GetInfo().Timing.BPM_At(HitObject.Time) + "/100))");
             }
             else
             {
-                Logger.Log("EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * (float)Path.GetLength() / beatmap.GetInfo().Difficulty.SliderMultiplier)");
-                Logger.Log(HitObject.EndTime + " = " + HitObject.Time + " + (int)((" + HitObject.SliderInformation.SlideRepeat + "+1) * (float)" + HitObject.Path.GetLength() + " / " + ParentMap.GetInfo().Difficulty.SliderMultiplier + ")");
+                Logger.Log("EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * (float)Path.GetLength() / beatmap.GetInfo().Difficulty.SliderMultiplier) * (beatmap.GetInfo().Timing.BPM_At(Time)/100))");
+                Logger.Log(HitObject.EndTime + " = " + HitObject.Time + " + (int)((" + HitObject.SliderInformation.SlideRepeat + "+1) * (float)" + HitObject.Path.GetLength() + " / " + ParentMap.GetInfo().Difficulty.SliderMultiplier + ") * (" + ParentMap.GetInfo().Timing.BPM_At(HitObject.Time) + "/100))");
             }
             Logger.Log(" ======== slider info end ======== ");
             */
@@ -155,10 +154,9 @@ namespace noobOsu.Game.HitObjects
                     approachEnded = true;
                     currentTime = 0f;
 
-                    sliderStart.End();
+                    sliderStart.EndHitcircle();
+                    CircleNumbers.Alpha = 0;
                     Ball.Start();
-                    if (sliderEnd != null)
-                        sliderEnd.End();
                 }
             }
 
@@ -167,7 +165,13 @@ namespace noobOsu.Game.HitObjects
                 currentTime += (float)Clock.ElapsedFrameTime;
                 double progress = currentTime / (Duration);
                 progress = Math.Clamp(progress, 0, 1);
+                
                 Ball.Update(progress);
+
+                sliderStart.Update((float)Clock.ElapsedFrameTime);
+                if (sliderEnd != null)
+                    sliderEnd.Update((float)Clock.ElapsedFrameTime);
+                
                 if (currentTime >= Duration)
                 {
                     circleEnded = true;

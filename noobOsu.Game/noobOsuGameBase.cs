@@ -45,6 +45,7 @@ namespace noobOsu.Game
             clientAudioManager = new noobOsuAudioManager(Host.AudioThread, tracksContianer, samplesContainer);
 
             Textures.AddTextureSource(new ExternalTextureStore());
+            Fonts.AddTextureSource(new SkinFontStore());
 
             Host.Window.Title = "noobOsu";
         }

@@ -1,16 +1,24 @@
+using osuTK;
 using System.IO;
+using osu.Framework.Graphics;
 using System.Collections.Generic;
+using noobOsu.Game.Skins.Drawables;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using noobOsu.Game.HitObjects.Drawables;
 
 namespace noobOsu.Game.Skins
 {
     public interface ISkin
     {
+        string DirectoryName { get; }
         ISkinGeneral General { get; }
         ISkinColors Colors { get; }
         ISkinFont Font { get; }
 
         void LoadSkin(string path);
+
+        SpriteText GetHitobjectNumber(int num, DrawableHitObject hitObject, TextureStore textureStore);
 
         void ResolveSkinnables(IEnumerable<ISkinnable> skinnables, TextureStore textureStore);
 

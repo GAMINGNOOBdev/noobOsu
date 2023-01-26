@@ -37,6 +37,9 @@ namespace noobOsu.Game.Skins
         // parse info from a string
         void AddColorInfo(string info);
         Color4? GetColorFor(string name);
+
+        // reset the combo colors at each exit/start of a beatmap
+        void ResetComboColor();
     }
 
     public class SkinColors : ISkinColors
@@ -57,6 +60,11 @@ namespace noobOsu.Game.Skins
         public SkinColors(Skin p)
         {
             Parent = p;
+        }
+
+        public void ResetComboColor()
+        {
+            SkinComboColors.RestartColor();
         }
 
         public void AddColorInfo(string info)
@@ -122,7 +130,7 @@ namespace noobOsu.Game.Skins
                 if (Parent.General.AllowSliderBallTint)
                     return SliderBall;
                 else
-                    return null;
+                    return Color4.White;
             }
             if (name.Equals("SliderBorder"))
             {

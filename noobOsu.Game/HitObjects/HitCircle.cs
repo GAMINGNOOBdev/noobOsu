@@ -32,9 +32,6 @@ namespace noobOsu.Game.HitObjects
             approachEnded = false;
             circleEnded = false;
             started = false;
-
-            RelativePositionAxes = Axes.Both;
-            Position = hitObj.Position;
         }
 
         [BackgroundDependencyLoader]
@@ -69,6 +66,7 @@ namespace noobOsu.Game.HitObjects
             hitcircleOverlay.Scale = new Vector2(Radius*2);
             AddProperty(new SkinnableTextureProperty(hitcircleOverlay, "hitcircleoverlay"));
 
+            AddProperty(new SkinnableHitcircleNumberProperty(this, ComboNumber, "numbers"));
 
             hitcircleArea.Alpha = 0f;
             hitcircleOverlay.Alpha = 0f;
@@ -94,6 +92,7 @@ namespace noobOsu.Game.HitObjects
             approachCircle.FadeInFromZero(fadeTime);
             hitcircleArea.FadeInFromZero(fadeTime);
             hitcircleOverlay.FadeInFromZero(fadeTime);
+            CircleNumbers.FadeInFromZero(fadeTime);
         }
 
         public override void End()
@@ -106,6 +105,7 @@ namespace noobOsu.Game.HitObjects
             hitcircleArea.ScaleTo(Radius*2 * 1.5f * hitcircleArea.ScaleFactor, 200);
             hitcircleOverlay.ScaleTo(Radius*2 * 1.5f * hitcircleOverlay.ScaleFactor, 200);
             approachCircle.Alpha = 0f;
+            CircleNumbers.Alpha = 0f;
         }
 
         public override void DisposeResources()
@@ -113,6 +113,7 @@ namespace noobOsu.Game.HitObjects
             hitcircleArea.Dispose();
             hitcircleOverlay.Dispose();
             approachCircle.Dispose();
+            CircleNumbers.Dispose();
         }
 
         protected override void Update()

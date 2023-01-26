@@ -18,13 +18,15 @@ namespace noobOsu.Game.Beatmaps
         private Container draw_container;
         private readonly Beatmap beatmap;
         private Scheduler ParentScheduler;
+        private readonly ISkin CurrentSkin;
 
         public Beatmap Map => beatmap;
         public bool Started { get; set; } = false;
 
-        public DrawableBeatmap(Beatmap beatmap)
+        public DrawableBeatmap(Beatmap beatmap, ISkin current)
         {
             this.beatmap = beatmap;
+            this.CurrentSkin = current;
             if (this.beatmap == null) this.beatmap = new Beatmap(null);
         }
 
@@ -70,12 +72,21 @@ namespace noobOsu.Game.Beatmaps
 
         public new void Dispose()
         {
+            foreach (DrawableHitObject d in drawableObjects)
+            {
+                d.DisposeResources();
+            }
+            if (beatmap.GetAudio() != null)
+            {
+                Track audio = beatmap.GetAudio();
+                audio.Stop();
+                audio.Dispose();
+            }
             beatmap.Dispose();
         }
 
         public void Load(AudioManager audioManager, TextureStore Textures)
         {
-            Logger.Log("loading beatmap objects");
             if (audioManager != null)
             {
                 beatmap.Load(audioManager, null);
@@ -83,8 +94,9 @@ namespace noobOsu.Game.Beatmaps
                     AddInternal(beatmap.MapAudio);
             }
 
-            IColorStore Colors = Settings.GameSettings.GetCurrentSkin().Colors.SkinComboColors; 
-            if (Settings.GameSettings.INSTANCE.UseBeatmapColors.Value && beatmap.GetInfo().Colors != null)
+            IColorStore Colors = CurrentSkin.Colors.SkinComboColors;
+            Colors.RestartColor();
+            if (Settings.GameSettings.INSTANCE.UseBeatmapColors.Value && !beatmap.GetInfo().Colors.IsEmpty())
             {
                 Colors = beatmap.GetInfo().Colors;
             }
@@ -93,22 +105,22 @@ namespace noobOsu.Game.Beatmaps
             for (int i = 0; i < beatmap.HitObjects.Count; i++)
             {
                 obj = null;
+
                 if (beatmap.HitObjects[i].isCircle())
-                {
                     drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
-                }
+
                 if (beatmap.HitObjects[i].isSlider())
-                {
                     drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
-                    //drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
+
+                if (beatmap.HitObjects[i].isSpinner())
+                {
+                    // TODO: --- add spinners ---
                 }
 
                 if (obj != null) draw_container.Add(obj);
             }
 
-            Settings.GameSettings.GetCurrentSkin().ResolveSkinnables(drawableObjects, Textures);
-
-            Logger.Log("added " + drawableObjects.Count + " objects to the scene");
+            CurrentSkin.ResolveSkinnables(drawableObjects, Textures);
         }
 
         public void ClearData()

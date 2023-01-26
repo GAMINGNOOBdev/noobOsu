@@ -1,8 +1,10 @@
 using osuTK.Graphics;
+using noobOsu.Game.Util;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Lines;
+using osu.Framework.Extensions.Color4Extensions;
 
-namespace noobOsu.Game.HitObjects
+namespace noobOsu.Game.HitObjects.Drawables
 {
     public partial class ColoredPath : SmoothPath
     {
@@ -46,7 +48,7 @@ namespace noobOsu.Game.HitObjects
             }
         }
 
-        protected float CalculatedBorder => BorderSize * BORDER;
+        protected float CalculatedBorder => BorderSize * BORDER * 0.77f;
 
         protected override Color4 ColourAt(float position)
         {
@@ -54,7 +56,11 @@ namespace noobOsu.Game.HitObjects
                 return BorderColor.Value;
             
             position -= CalculatedBorder;
-            return new Color4( AccentColor.Value.R, AccentColor.Value.G, AccentColor.Value.B, (opacity_edge - (opacity_edge - opacity_centre) * position / GRADIENT) * AccentColor.Value.A );
+            Color4 accent = AccentColor.Value;
+
+            Color4 color = ColorUtil.Interpolate(accent.Darken(0.1f), ColorUtil.Lighten(accent, 0.5f), position / GRADIENT);
+            color.A = 0.5f; // always has to be somewhat transparent
+            return color;
         }
     }
 }

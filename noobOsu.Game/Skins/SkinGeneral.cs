@@ -57,6 +57,9 @@ namespace noobOsu.Game.Skins
 
         // parse info from a string
         void AddGeneralInfo(string info);
+
+        // get the info for a property with the name "name"
+        object GetInfoFor(string name);
     }
 
     public class SkinGeneral : ISkinGeneral
@@ -161,6 +164,79 @@ namespace noobOsu.Game.Skins
             {
                 SpinnerNoBlink = int.Parse(splitInfo[1]) > 0;
             }
+        }
+
+        public object GetInfoFor(string name)
+        {
+            if (name.Equals("Name"))
+            {
+                return Name;
+            }
+            if (name.Equals("Author"))
+            {
+                return Author;
+            }
+            if (name.Equals("Version"))
+            {
+                return Version;
+            }
+            if (name.Equals("AnimationFramerate"))
+            {
+                return AnimationFramerate;
+            }
+            if (name.Equals("AllowSliderBallTint"))
+            {
+                return AllowSliderBallTint;
+            }
+            if (name.Equals("ComboBurstRandom"))
+            {
+                return ComboBurstRandom;
+            }
+            if (name.Equals("CursorCentre"))
+            {
+                return CursorCentre;
+            }
+            if (name.Equals("CursorExpand"))
+            {
+                return CursorExpand;
+            }
+            if (name.Equals("CursorRotate"))
+            {
+                return CursorRotate;
+            }
+            if (name.Equals("CursorTrailRotate"))
+            {
+                return CursorTrailRotate;
+            }
+            if (name.Equals("ComboBurstSounds"))
+            {
+                ///TODO: --- implement ---
+            }
+            if (name.Equals("HitCircleOverlayAboveNumber"))
+            {
+                return HitCircleOverlayAboveNumber;
+            }
+            if (name.Equals("LayeredHitSounds"))
+            {
+                return LayeredHitSounds;
+            }
+            if (name.Equals("SliderBallFlip"))
+            {
+                return SliderBallFlip;
+            }
+            if (name.Equals("SpinnerFadePlayfield"))
+            {
+                return SpinnerFadePlayfield;
+            }
+            if (name.Equals("SpinnerFrequencyModulate"))
+            {
+                return SpinnerFrequencyModulate;
+            }
+            if (name.Equals("SpinnerNoBlink"))
+            {
+                return SpinnerNoBlink;
+            }
+            return null;
         }
     }
 }

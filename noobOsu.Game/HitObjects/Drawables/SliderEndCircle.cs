@@ -13,13 +13,17 @@ namespace noobOsu.Game.HitObjects
     public partial class SliderEndCircle : CompositeDrawable
     {   
         private HitObjectSprite sliderEndCircle, reverseArrow;
-        private float totalVisibleTime, fadeTime;
+        private float totalVisibleTime, fadeTime, CurrentTime = 0;
         private float waitingTime, hitWindow;
+        private int RepeatMax, LastRepeatTime = 0;
+        private bool Started, Ended;
         private Slider ParentSlider;
 
         public SliderEndCircle(Slider parent, Vector2 circlePosition)
         {
             ParentSlider = parent;
+            RepeatMax = parent.HitObject.SliderInformation.SlideRepeat;
+            LastRepeatTime = parent.HitObject.SliderInformation.GetRepeatTimingInfo().ForSliderEnd();
 
             totalVisibleTime = BeatmapDifficulty.ScaleWithRange(ParentSlider.ParentMap.GetInfo().Difficulty.AR, 1800f, 1200f, 450f);
             fadeTime = BeatmapDifficulty.ScaleWithRange(ParentSlider.ParentMap.GetInfo().Difficulty.AR, 1200f, 800f, 300f);
@@ -60,14 +64,27 @@ namespace noobOsu.Game.HitObjects
             AddInternal(reverseArrow);
         }
 
+        public void Update(float delta)
+        {
+            CurrentTime += delta;
+            if (CurrentTime >= LastRepeatTime)
+            {
+                End();
+            }
+        }
+
         public void Start()
         {
+            if (Started) return;
+            Started = true;
             sliderEndCircle.FadeInFromZero(fadeTime);
             reverseArrow.FadeInFromZero(fadeTime);
         }
 
         public void End()
         {
+            if (Ended) return;
+            Ended = true;
             sliderEndCircle.FadeOutFromOne(200);
             reverseArrow.FadeOutFromOne(200);
         }

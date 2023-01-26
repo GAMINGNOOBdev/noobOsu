@@ -1,11 +1,16 @@
 using System.IO;
+using noobOsu.Game.Stores;
+using osu.Framework.Graphics;
 using System.Collections.Generic;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using noobOsu.Game.HitObjects.Drawables;
 
 namespace noobOsu.Game.Skins
 {
     public class Skin : ISkin
     {
+        public string DirectoryName { get; set; }
         public ISkinGeneral General { get; private set; }
         public ISkinColors Colors { get; private set; }
         public ISkinFont Font { get; private set; }
@@ -15,6 +20,16 @@ namespace noobOsu.Game.Skins
             General = new SkinGeneral(this);
             Colors = new SkinColors(this);
             Font = new SkinFont(this);
+        }
+
+        public SpriteText GetHitobjectNumber(int num, DrawableHitObject hitObject, TextureStore textureStore) {
+            string numAsString = num.ToString();
+
+            SpriteText numberTextures = new SpriteText(){
+                Font = GetHitcircleFont(hitObject.Radius / (float)SkinFontStore.INSTANCE?.GetCharacterScale( numAsString[0] )),
+                Text = numAsString,
+            };
+            return numberTextures;
         }
 
         public void ResolveSkinnables(IEnumerable<ISkinnable> skinnables, TextureStore textureStore)
@@ -27,16 +42,16 @@ namespace noobOsu.Game.Skins
                     {
                         case ISkinnableProperty.Type.Texture:
                         case ISkinnableProperty.Type.StaticImage:
-                            if (File.Exists("Skins/" + General.Name + "/" + property.Name + "@2x.png"))
+                            if (File.Exists("Skins/" + DirectoryName + "/" + property.Name + "@2x.png"))
                             {
                                 property.SetScale(2);
-                                property.Resolve(textureStore.Get("Skins/" + General.Name + "/" + property.Name + "@2x.png"));
+                                property.Resolve(textureStore.Get("Skins/" + DirectoryName + "/" + property.Name + "@2x.png"));
                                 break;
                             }
-                            if (File.Exists("Skins/" + General.Name + "/" + property.Name + ".png"))
+                            if (File.Exists("Skins/" + DirectoryName + "/" + property.Name + ".png"))
                             {
                                 property.SetScale(1);
-                                property.Resolve(textureStore.Get("Skins/" + General.Name + "/" + property.Name + ".png"));
+                                property.Resolve(textureStore.Get("Skins/" + DirectoryName + "/" + property.Name + ".png"));
                                 break;
                             }
                             property.Resolve(textureStore.Get("Skins/default/" + property.Name + ".png"));
@@ -47,11 +62,15 @@ namespace noobOsu.Game.Skins
                             break;
                         
                         case ISkinnableProperty.Type.Audio:
-                            property.Resolve(noobOsuAudioManager.INSTANCE.GetTrackStore().Get("Skins/" + General.Name + "/" + property.Name));
+                            property.Resolve(noobOsuAudioManager.INSTANCE.GetTrackStore().Get("Skins/" + DirectoryName + "/" + property.Name));
                             break;
                         
                         case ISkinnableProperty.Type.Font:
-                            ///TODO: -- implement --
+                            property.Resolve(new object[] {this, textureStore});
+                            break;
+                        
+                        case ISkinnableProperty.Type.Bool:
+                            property.Resolve(General.GetInfoFor(property.Name));
                             break;
                     }
                 }
@@ -112,6 +131,11 @@ namespace noobOsu.Game.Skins
                 }
             }
             file.Close();
+        }
+
+        private FontUsage GetHitcircleFont(float size)
+        {
+            return new FontUsage(SkinFontStore.INSTANCE?.FontName, size: size);
         }
 
         private enum SkinLoadingSection

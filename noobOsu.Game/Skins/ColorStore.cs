@@ -8,6 +8,7 @@ namespace noobOsu.Game.Skins
     {
         private readonly List<Color4> Colors = new List<Color4>();
         private int CurrentColorIndex = 0;
+        private int ComboNumber = 0;
 
         public void AddColor(string color)
         {
@@ -17,6 +18,9 @@ namespace noobOsu.Game.Skins
         public void NextColor()
         {
             if (Colors.Count == 0) return;
+
+            ComboNumber = 0;
+
             CurrentColorIndex++;
             CurrentColorIndex %= Colors.Count;
         }
@@ -28,11 +32,24 @@ namespace noobOsu.Game.Skins
             CurrentColorIndex %= Colors.Count;
         }
 
-        public Color4? GetComboColor()
+        public Color4? GetColor()
         {
             if (Colors.Count == 0)
-                return null;
+                return Color4.White;
+            
+            ComboNumber++;
+            
             return Colors[CurrentColorIndex];
         }
+
+        public void RestartColor()
+        {
+            CurrentColorIndex = 0;
+            ComboNumber = 0;
+        }
+
+        public int GetComboNumber() => ComboNumber;
+
+        public bool IsEmpty() => Colors.Count == 0;
     }
 }

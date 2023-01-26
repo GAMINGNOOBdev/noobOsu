@@ -1,6 +1,7 @@
 using osuTK;
 using osuTK.Graphics;
 using noobOsu.Game.Util;
+using osu.Framework.Utils;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Logging;
 using osu.Framework.Graphics;
@@ -18,7 +19,9 @@ namespace noobOsu.Game.HitObjects
         private readonly Slider ParentSlider;
         private HitObjectSprite Ball, FollowCircle;
         private Bindable<Color4> BallColor = new Bindable<Color4>();
+        private Bindable<bool> RotateFollowBall = new Bindable<bool>(false);
         private double CurrentProgress;
+        private int RepeatMax;
         private bool Started = false, Ended = false;
         private float fadeTime;
         private Vector2 LastPosition;
@@ -26,6 +29,7 @@ namespace noobOsu.Game.HitObjects
         public SliderBall(Slider parent)
         {
             ParentSlider = parent;
+            RepeatMax = ParentSlider.HitObject.SliderInformation.SlideRepeat + 1;
             RelativePositionAxes = Axes.None;
             LastPosition = new Vector2(0.0f);
             fadeTime = BeatmapDifficulty.ScaleWithRange(ParentSlider.ParentMap.GetInfo().Difficulty.AR, 1200f, 800f, 300f);
@@ -56,6 +60,8 @@ namespace noobOsu.Game.HitObjects
             FollowCircle.Scale = new Vector2(ParentSlider.Radius*2);
             ParentSlider.AddProperty(new SkinnableTextureProperty(FollowCircle, "sliderfollowcircle"));
 
+            ParentSlider.AddProperty(new SkinnableBoolProperty(RotateFollowBall, true, "SliderBallFlip"));
+
             Ball.Alpha = 0f;
             FollowCircle.Alpha = 0f;
 
@@ -78,7 +84,7 @@ namespace noobOsu.Game.HitObjects
             if (Ended) return;
             Ended = true;
             
-            Ball.FadeOutFromOne(200f);
+            Ball.Alpha = 0f;
             FollowCircle.FadeOutFromOne(200f);
             FollowCircle.ScaleTo(ParentSlider.Radius*2 * 0.75f * FollowCircle.ScaleFactor, 200f);
         }
@@ -91,14 +97,14 @@ namespace noobOsu.Game.HitObjects
 
         public void Update(double progress)
         {   
-            CurrentProgress = progress * (ParentSlider.HitObject.SliderInformation.SlideRepeat+1) % 1;
+            CurrentProgress = progress * RepeatMax % 1;
 
-            if ((int)(progress * (ParentSlider.HitObject.SliderInformation.SlideRepeat+1)) % 2 == 1)
+            if ((int)(progress * RepeatMax) % 2 == 1)
                 CurrentProgress = 1 - CurrentProgress;
 
             Position = ParentSlider.HitObject.Path.GetProgressPoint( CurrentProgress );
-            Vector2 difference = LastPosition - Position;
-            Rotation = (float)VectorUtil.GetAngleBetween(LastPosition, Position);
+            if (RotateFollowBall.Value)
+                Ball.Rotation = (float)VectorUtil.GetAngleBetween(LastPosition, Position);
             LastPosition = Position;
         }
     }

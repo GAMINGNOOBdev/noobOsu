@@ -36,7 +36,7 @@ namespace noobOsu.Game.HitObjects.Drawables
             if (Scale > 1)
             {
                 if (AutoCrop)
-                    Drawable.Texture = TextureUtil.CropIfNeeded(Drawable.Texture, Scale);
+                    Drawable.Texture = TextureUtil.CropHitCircleIfNeeded(Drawable.Texture, Scale);
             
                 Drawable.Scale *= new Vector2(TextureUtil.GetScaleFor(Drawable.Texture)) * (float)(1/Scale);
                 Drawable.ScaleFactor = TextureUtil.GetScaleFor(Drawable.Texture) * (float)(1/Scale);
@@ -44,7 +44,7 @@ namespace noobOsu.Game.HitObjects.Drawables
             else
             {
                 if (AutoCrop)
-                    Drawable.Texture = TextureUtil.CropIfNeeded(Drawable.Texture);
+                    Drawable.Texture = TextureUtil.CropHitCircleIfNeeded(Drawable.Texture);
             
                 Drawable.Scale *= new Vector2(TextureUtil.GetScaleFor(Drawable.Texture));
                 Drawable.ScaleFactor = TextureUtil.GetScaleFor(Drawable.Texture);

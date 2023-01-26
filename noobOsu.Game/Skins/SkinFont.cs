@@ -20,6 +20,11 @@ namespace noobOsu.Game.Skins
         // overlap of the combo numbers in pixels (negatives add a gap)
         int ComboOverlap { get; }
 
+        // only the last (or only) part of the hitcircle, score and combo prefix
+        string HitCircle { get; }
+        string Score { get; }
+        string Combo { get; }
+
         // parse font info from string
         void AddFontInfo(string info);
     }
@@ -38,6 +43,10 @@ namespace noobOsu.Game.Skins
 
         public int ComboOverlap { get; private set; } = 0;
 
+        public string HitCircle { get; private set; } = "default";
+        public string Score { get; private set; } = "score";
+        public string Combo { get; private set; } = "score";
+
         private Skin Parent;
 
         public SkinFont(Skin p)
@@ -51,29 +60,53 @@ namespace noobOsu.Game.Skins
             
             if (splitInfo.Length < 2) return;
 
-            if (splitInfo[0].Equals(HitCirclePrefix))
+            if (splitInfo[1].Contains('\\'))
+                splitInfo[1] = splitInfo[1].Replace('\\','/');
+
+            if (splitInfo[0].Equals("HitCirclePrefix"))
             {
                 HitCirclePrefix = splitInfo[1];
+                if (HitCirclePrefix.Contains("/"))
+                {
+                    string[] prefixes = HitCirclePrefix.Split('/');
+                    HitCircle = prefixes[prefixes.Length-1];
+                }
+                else
+                    HitCircle = HitCirclePrefix;
             }
-            if (splitInfo[0].Equals(HitCirclePrefix))
+            if (splitInfo[0].Equals("HitCircleOverlap"))
             {
                 HitCircleOverlap = int.Parse(splitInfo[1]);
             }
             
-            if (splitInfo[0].Equals(ScorePrefix))
+            if (splitInfo[0].Equals("ScorePrefix"))
             {
                 ScorePrefix = splitInfo[1];
+                if (ScorePrefix.Contains("/"))
+                {
+                    string[] prefixes = ScorePrefix.Split('/');
+                    HitCircle = prefixes[prefixes.Length-1];
+                }
+                else
+                    HitCircle = ScorePrefix;
             }
-            if (splitInfo[0].Equals(ScorePrefix))
+            if (splitInfo[0].Equals("ScoreOverlap"))
             {
                 ScoreOverlap = int.Parse(splitInfo[1]);
             }
             
-            if (splitInfo[0].Equals(ComboPrefix))
+            if (splitInfo[0].Equals("ComboPrefix"))
             {
                 ComboPrefix = splitInfo[1];
+                if (ComboPrefix.Contains("/"))
+                {
+                    string[] prefixes = ComboPrefix.Split('/');
+                    HitCircle = prefixes[prefixes.Length-1];
+                }
+                else
+                    HitCircle = ComboPrefix;
             }
-            if (splitInfo[0].Equals(ComboPrefix))
+            if (splitInfo[0].Equals("ComboOverlap"))
             {
                 ComboOverlap = int.Parse(splitInfo[1]);
             }

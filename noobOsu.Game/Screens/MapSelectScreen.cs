@@ -1,7 +1,11 @@
 using System.IO;
 using osuTK.Input;
+using noobOsu.Game.UI;
+using noobOsu.Game.Beatmaps;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osu.Framework.Graphics;
+using noobOsu.Game.UI.Beatmap;
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
 using System.Collections.Generic;
@@ -13,9 +17,11 @@ namespace noobOsu.Game.Screens
     {
         public static MapSelectScreen INSTANCE { get; private set; }
 
-        private readonly List<Button> beatmapsSelect = new List<Button>();
+        private BeatmapDropdown dropdown;
+        private BasicButton startMapButton;
+        private BasicButton settingsButton;
         private string SelectedSongDifficulty => SelectedSongFolder;
-        private string SelectedSongFolder = "mymap";
+        private string SelectedSongFolder;
 
         public MapSelectScreen()
         {
@@ -26,28 +32,38 @@ namespace noobOsu.Game.Screens
         [BackgroundDependencyLoader]
         private void load()
         {
-            int yOffset = 20;
+            startMapButton = new BasicButton();
+            startMapButton.Text = "Start Beatmap";
+            startMapButton.X = 200;
+            startMapButton.Y = 20;
+            startMapButton.Size = new osuTK.Vector2(20 * "Start Beatmap".Length, 20);
+            startMapButton.Action = () => {
+                SelectedSongFolder = dropdown.Current.Value;
+                if (!string.IsNullOrEmpty(SelectedSongFolder))
+                    LoadMap();
+            };
 
+            settingsButton = new BasicButton();
+            settingsButton.Text = "Settings";
+            settingsButton.X = 200;
+            settingsButton.Y = 50;
+            settingsButton.Size = new osuTK.Vector2(20 * "Settings".Length, 20);
+            settingsButton.Action = () => {
+                noobOsuGame.INSTANCE.ScreenStack.Push(new SettingsScreen());
+            };
+
+            dropdown = new BeatmapDropdown();
+            dropdown.X = 500;
+            dropdown.Y = 20;
             foreach (string s in Directory.EnumerateDirectories("Songs/", "*", SearchOption.TopDirectoryOnly))
             {
                 string songName = s.Substring("Songs/".Length);
-                BasicButton b = new BasicButton();
-                b.Text = songName;
-                b.Y = yOffset;
-                b.X = 200;
-                b.Size = new osuTK.Vector2(20 * songName.Length, 20);
-                b.Action = () => {
-                    SelectedSongFolder = songName;
-                    LoadMap();
-                };
-                yOffset += 30;
-                beatmapsSelect.Add(b);
+                dropdown.AddMap(songName);
             }
 
-            foreach (Button b in beatmapsSelect)
-            {
-                AddInternal(b);
-            }
+            AddInternal(startMapButton);
+            AddInternal(settingsButton);
+            AddInternal(dropdown);
         }
 
         protected override void LoadComplete()

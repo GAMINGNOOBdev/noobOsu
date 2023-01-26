@@ -159,6 +159,14 @@ namespace noobOsu.Game.Beatmaps
                 {
                     info.AudioFilename = values[1];
                 }
+                if (values[0].Equals("AudioLeadIn"))
+                {
+                    info.AudioLeadIn = float.Parse(values[1]);
+                }
+                if (values[0].Equals("AudioLength"))
+                {
+                    info.AudioLength = float.Parse(values[1]);
+                }
             }
         }
 

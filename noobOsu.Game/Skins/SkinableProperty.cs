@@ -11,11 +11,17 @@ namespace noobOsu.Game.Skins
 
         public enum Type
         {
+            // loadable assembly types
             StaticImage,
             Texture,
             Color,
             Audio,
             Font,
+
+            // primitive types
+            Double,
+            Bool,
+            Int,
         }
     }
 

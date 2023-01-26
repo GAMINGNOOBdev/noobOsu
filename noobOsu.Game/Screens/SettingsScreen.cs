@@ -18,6 +18,7 @@ namespace noobOsu.Game.Screens
         private Box box;
         private SkinSelectDropdown SkinSelect;
         private BasicCheckbox useBeatmapSkin, useBeatmapHitsound, useBeatmapColor;
+        private BasicButton backButton;
 
         public SettingsScreen() {}
 
@@ -44,10 +45,9 @@ namespace noobOsu.Game.Screens
 
             foreach (ISkin skin in GameSettings.Skins)
             {
-                SkinSelect.AddSkin(skin.General.Name, skin);
-                if (skin.General.Name.Equals(GameSettings.INSTANCE.LastSkinName))
+                SkinSelect.AddSkin(skin.DirectoryName, skin);
+                if (skin.DirectoryName.Equals(GameSettings.INSTANCE.LastSkinName))
                     SkinSelect.Current.Value = skin;
-                Logger.Log("skinname: " + skin.General.Name);
             }
 
             useBeatmapSkin = new BasicCheckbox()
@@ -74,10 +74,23 @@ namespace noobOsu.Game.Screens
             useBeatmapHitsound.LabelText = "Use Beatmap Hitsounds";
             useBeatmapHitsound.Current.BindTo(GameSettings.INSTANCE.UseBeatmapHitsounds);
 
+            backButton = new BasicButton()
+            {
+                Origin = Anchor.BottomLeft,
+                RelativePositionAxes = Axes.Y,
+                Y = 1f,
+                Text = "Back",
+                Size = new Vector2(20 * "Back".Length, 20),
+                Action = () => {
+                    this.Exit();
+                },
+            };
+
             AddInternal(box);
             AddInternal(useBeatmapSkin);
             AddInternal(useBeatmapColor);
             AddInternal(useBeatmapHitsound);
+            AddInternal(backButton);
             AddInternal(SkinSelect);
 
             Position = new Vector2(-box.Size.X, Position.Y);

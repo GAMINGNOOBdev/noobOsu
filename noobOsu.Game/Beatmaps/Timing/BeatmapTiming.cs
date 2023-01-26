@@ -5,6 +5,7 @@ namespace noobOsu.Game.Beatmaps.Timing
     public class BeatmapTiming : IBeatmapTiming
     {
         private readonly List<ITimingPoint> timingPoints = new List<ITimingPoint>();
+        private readonly List<float> bpmPoints = new List<float>();
 
         public float BPM_average { get; set; } = 180;
         public float BPM_min { get; set; } = 0;
@@ -14,24 +15,26 @@ namespace noobOsu.Game.Beatmaps.Timing
         public void AddTimingPoint(ITimingPoint timingPoint)
         {
             timingPoints.Add( timingPoint );
-            if (FirstBPM == 0 && timingPoint.Uninherited == 1) FirstBPM = timingPoint.BeatLength;
+
+            if (timingPoint.Uninherited == 1)
+                bpmPoints.Add(timingPoint.BeatLength);
+
+            if (FirstBPM == 0)
+                FirstBPM = timingPoint.BeatLength;
         }
 
         public void CalculateBPM()
         {
-            foreach (ITimingPoint t in timingPoints)
+            foreach (float bpm in bpmPoints)
             {
-                if (t.Uninherited == 1)
+                if (bpm > BPM_average || bpm > BPM_max)
                 {
-                    if (t.BeatLength > BPM_average || t.BeatLength > BPM_max)
-                    {
-                        BPM_max = t.BeatLength;
-                    }
+                    BPM_max = 1 / bpm * 1000 * 60;
+                }
 
-                    if (t.BeatLength > BPM_average)
-                    {
-                        BPM_min = t.BeatLength;
-                    }
+                if (bpm > BPM_average)
+                {
+                    BPM_min = 1 / bpm * 1000 * 60;
                 }
             }
 
@@ -53,6 +56,8 @@ namespace noobOsu.Game.Beatmaps.Timing
                 if (t.TimeStamp > timestamp) break;
                 if (t.Uninherited == 1) lastBPM = t.BeatLength;
             }
+            if (lastBPM == 0)
+                return FirstBPM;
             return lastBPM;
         }
 

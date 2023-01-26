@@ -40,7 +40,8 @@ namespace noobOsu.Game.Settings
 
             foreach (string s in ISkin.GetAvailableSkinFolders())
             {
-                ISkin skin = new Skin();
+                Skin skin = new Skin();
+                skin.DirectoryName = s;
                 skin.LoadSkin("Skins/" + s + "/skin.ini");
                 Skins.Add(skin);
 
@@ -49,6 +50,8 @@ namespace noobOsu.Game.Settings
                     CurrentSkin.Value = skin;
                 }
             }
+            if (CurrentSkin.Value == null)
+                CurrentSkin.Value = FindSkin("default");
         }
 
         public void Dispose()
@@ -108,6 +111,16 @@ namespace noobOsu.Game.Settings
 
             SettingsWriter.Dispose();
             SettingsWriter.Close();
+        }
+
+        private ISkin FindSkin(string name)
+        {
+            foreach (ISkin skin in Skins)
+            {
+                if (skin.General.Name.Equals(name))
+                    return skin;
+            }
+            return null;
         }
     }
 }

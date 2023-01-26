@@ -15,6 +15,10 @@ namespace noobOsu.Game.Stores
         private readonly List<TextureUpload> textures = new List<TextureUpload>();
 
         public void Dispose() {
+            foreach (TextureUpload texture in textures)
+            {
+                texture.Dispose();
+            }
             foreach (Stream file in filestreams)
             {
                 file.Dispose();
@@ -22,7 +26,7 @@ namespace noobOsu.Game.Stores
             }
         }
 
-        public TextureUpload Get(string name)
+        public virtual TextureUpload Get(string name)
         {
             if (filenames.Contains(name))
             {
