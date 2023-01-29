@@ -7,7 +7,7 @@ namespace noobOsu.Game.Beatmaps.Timing
 
         // for uninherited points: BPM
         // for inherited points: inversed slider velocity multiplies of this timestamp until it is changed
-        float BeatLength { get; }
+        double BeatLength { get; }
 
         // amount of beats in one measure, only used by uninherited points
         int Meter { get; }
@@ -27,6 +27,10 @@ namespace noobOsu.Game.Beatmaps.Timing
         // effects bitfield (bit zero=kiai time enable)
         int Effects { get; }
 
+        // get as a string
+        string ToString();
+
+        // to clone an existing timing point
         ITimingPoint Clone();
     }
 }

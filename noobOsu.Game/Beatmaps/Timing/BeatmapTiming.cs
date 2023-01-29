@@ -5,12 +5,12 @@ namespace noobOsu.Game.Beatmaps.Timing
     public class BeatmapTiming : IBeatmapTiming
     {
         private readonly List<ITimingPoint> timingPoints = new List<ITimingPoint>();
-        private readonly List<float> bpmPoints = new List<float>();
+        private readonly List<double> bpmPoints = new List<double>();
 
-        public float BPM_average { get; set; } = 180;
-        public float BPM_min { get; set; } = 0;
-        public float BPM_max { get; set; } = 0;
-        public float FirstBPM { get; set; } = 0f;
+        public double BPM_average { get; set; } = 180;
+        public double BPM_min { get; set; } = 0;
+        public double BPM_max { get; set; } = 0;
+        public double FirstBPM { get; set; } = 0f;
 
         public void AddTimingPoint(ITimingPoint timingPoint)
         {
@@ -25,7 +25,7 @@ namespace noobOsu.Game.Beatmaps.Timing
 
         public void CalculateBPM()
         {
-            foreach (float bpm in bpmPoints)
+            foreach (double bpm in bpmPoints)
             {
                 if (bpm > BPM_average || bpm > BPM_max)
                 {
@@ -48,9 +48,9 @@ namespace noobOsu.Game.Beatmaps.Timing
 
         public ITimingPoint GetTimingPoint(int timestamp, bool uninherited) => FindClosestTimingPoint(timestamp, uninherited);
 
-        public float BPM_At(int timestamp)
+        public double BPM_At(int timestamp)
         {
-            float lastBPM = 0;
+            double lastBPM = 0;
             foreach (ITimingPoint t in timingPoints)
             {
                 if (t.TimeStamp > timestamp) break;

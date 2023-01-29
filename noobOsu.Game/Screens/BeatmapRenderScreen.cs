@@ -1,19 +1,21 @@
 using osuTK;
 using noobOsu.Game.Skins;
 using noobOsu.Game.Stores;
+using noobOsu.Game.Graphics;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Screens;
 using osu.Framework.Logging;
 using osu.Framework.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 
 namespace noobOsu.Game.Screens
 {
-    public partial class BeatmapRenderScreen : Screen
+    public partial class BeatmapRenderScreen : Screen, IExternalCanAddChildren
     {
         public static BeatmapRenderScreen INSTANCE { get; private set; }
         private readonly DrawSizePreservingFillContainer contents = new DrawSizePreservingFillContainer();
@@ -21,22 +23,22 @@ namespace noobOsu.Game.Screens
         private Beatmap beatmap;
         private DrawableBeatmap drawableBeatmap;
         private BasicButton exitBeatmapButton;
-        private string beatmapPath;
+        private IBeatmapGeneral beatmapInfo;
 
         public BeatmapRenderScreen()
         {
             if (INSTANCE != null) return;
             INSTANCE = this;
-
-            SelectedSkin = Settings.GameSettings.GetCurrentSkin();
         }
 
-        public void SetBeatmapPath(string path)
+        public void AddChild(Drawable child)
         {
-            if (path != null)
-            {
-                beatmapPath = path;
-            }
+            AddInternal(child);
+        }
+
+        public void SetMap(IBeatmapGeneral map)
+        {
+            beatmapInfo = map;
         }
 
         [BackgroundDependencyLoader]
@@ -45,8 +47,12 @@ namespace noobOsu.Game.Screens
             SelectedSkin = Settings.GameSettings.GetCurrentSkin();
 
             contents.Strategy = DrawSizePreservationStrategy.Minimum;
-            contents.TargetDrawSize = new Vector2(640, 513);
-            contents.BypassAutoSizeAxes = Axes.Y;
+            contents.TargetDrawSize = new Vector2(640, 512);
+            contents.FillMode = FillMode.Fit;
+            contents.FillAspectRatio = 4f/3f;
+            contents.Origin = Anchor.Centre;
+            contents.Anchor = Anchor.Centre;
+            contents.RelativeSizeAxes = Axes.Both;
             AddInternal(contents);
 
             exitBeatmapButton = new BasicButton()
@@ -65,12 +71,16 @@ namespace noobOsu.Game.Screens
 
             SkinFontStore.SetCurrentSkin(SelectedSkin);
 
-            beatmap = new Beatmap(beatmapPath);
-            drawableBeatmap = new DrawableBeatmap(beatmap, SelectedSkin);
+            beatmap = new Beatmap(beatmapInfo);
+            drawableBeatmap = new DrawableBeatmap(beatmap, this);
             drawableBeatmap.SetDrawContainer(contents);
             drawableBeatmap.Load(noobOsuAudioManager.INSTANCE, textures);
 
             drawableBeatmap.StartBeatmap(Scheduler);
+
+            AddInternal(drawableBeatmap);
+
+            Logger.Log("drawsize: " + contents.DrawSize + " size: " + contents.Size);
         }
 
         protected override void LoadComplete()
@@ -95,6 +105,7 @@ namespace noobOsu.Game.Screens
         {
             base.Dispose(isDisposing);
             drawableBeatmap.Dispose();
+            SkinFontStore.SetCurrentSkin(null);
         }
     }
 }

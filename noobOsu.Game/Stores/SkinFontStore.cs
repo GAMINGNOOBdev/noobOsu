@@ -19,7 +19,10 @@ namespace noobOsu.Game.Stores
         public static void SetCurrentSkin(ISkin skin)
         {
             if (INSTANCE != null)
+            {
                 INSTANCE.CurrentSkin = skin;
+                INSTANCE.LoadAllChars();
+            }
         }
 
         private readonly List<Stream> filestreams = new List<Stream>();
@@ -29,7 +32,16 @@ namespace noobOsu.Game.Stores
         private readonly List<char> characters = new List<char>();
         private ISkin skin;
 
-        public string FontName => skin?.DirectoryName;
+        public string FontName {
+            get
+            {
+                if (skin != null)
+                    return skin.DirectoryName;
+                
+                return "__SKIN__FONT__RESERVED__";
+            }
+            set => throw new System.NotSupportedException("setting the fontname is not supported");
+        }
 
         public float? Baseline => 0;
 
@@ -141,13 +153,25 @@ namespace noobOsu.Game.Stores
         }
 
         // only numbers are supported
-        public bool HasGlyph(char c) => Char.IsDigit(c);
+        public bool HasGlyph(char c) => Char.IsDigit(c) && characters.Contains(c);
 
         public Task LoadFontAsync() => throw new System.NotImplementedException();
 
         CharacterGlyph IResourceStore<CharacterGlyph>.Get(string name) => Get(name[0]);
 
         Task<CharacterGlyph> IResourceStore<CharacterGlyph>.GetAsync(string name, CancellationToken cancellationToken) => throw new System.NotImplementedException();
+
+        
+        private void LoadAllChars()
+        {
+            if (skin == null)
+                return;
+
+            for (char c = '0'; c <= '9'; c++)
+            {
+                Get(c);
+            }
+        }
 
         private string GetPath(string name)
         {

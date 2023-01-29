@@ -23,6 +23,7 @@ namespace noobOsu.Game.Settings
         public BindableBool UseBeatmapSkins = new BindableBool(true);
         public BindableBool UseBeatmapHitsounds = new BindableBool(true);
         public BindableBool UseBeatmapColors = new BindableBool(true);
+        public BindableInt BeatmapBackgroundDim = new BindableInt(0){ MinValue = 0, MaxValue = 100 };
         
         public GameSettings()
         {
@@ -93,6 +94,10 @@ namespace noobOsu.Game.Settings
                 {
                     UseBeatmapColors.Value = bool.Parse(splitLine[1]);
                 }
+                if (splitLine[0].Equals("BeatmapBackgroundDim"))
+                {
+                    BeatmapBackgroundDim.Value = int.Parse(splitLine[1]);
+                }
             }
 
             SettingsReader.Dispose();
@@ -108,6 +113,7 @@ namespace noobOsu.Game.Settings
             SettingsWriter.WriteLine("UseBeatmapSkins = " + UseBeatmapSkins.Value);
             SettingsWriter.WriteLine("UseBeatmapHitsounds = " + UseBeatmapHitsounds.Value);
             SettingsWriter.WriteLine("UseBeatmapColors = " + UseBeatmapColors.Value);
+            SettingsWriter.WriteLine("BeatmapBackgroundDim = " + BeatmapBackgroundDim.Value);
 
             SettingsWriter.Dispose();
             SettingsWriter.Close();

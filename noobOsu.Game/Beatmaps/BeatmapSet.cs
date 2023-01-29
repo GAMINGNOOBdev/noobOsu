@@ -24,7 +24,7 @@ namespace noobOsu.Game.Beatmaps
         IBeatmapGeneral SetInfo { get; }
 
         // list of all beatmaps in this set
-        IReadOnlyList<BeatmapGeneral> GetBeatmaps();
+        IReadOnlyList<IBeatmapGeneral> GetBeatmaps();
     }
 
     public class BeatmapSet : IBeatmapSet
@@ -38,7 +38,7 @@ namespace noobOsu.Game.Beatmaps
             get => mapsetInfo;
             set => throw new System.NotSupportedException("setting of the set info not supported, can only be read using ReadSetInfo");
         }
-        public IReadOnlyList<BeatmapGeneral> GetBeatmaps() => beatmaps;
+        public IReadOnlyList<IBeatmapGeneral> GetBeatmaps() => beatmaps;
 
         public void ReadSetInfo(string setDirectoryName)
         {
@@ -51,7 +51,7 @@ namespace noobOsu.Game.Beatmaps
             {
                 string filename = s.Substring("Songs/".Length + setDirectoryName.Length + 1);
                 
-                BeatmapGeneral g = new BeatmapGeneral();
+                BeatmapGeneral g = new BeatmapGeneral(this);
                 g.SetAttributes(filename);
                 beatmaps.Add(g);
                 if (mapsetInfo == null)
@@ -60,7 +60,7 @@ namespace noobOsu.Game.Beatmaps
 
             if (mapsetInfo == null)
             {
-                mapsetInfo = new BeatmapGeneral();
+                mapsetInfo = new BeatmapGeneral(this);
                 mapsetInfo.FromMapset(SetName);
             }
         }

@@ -26,7 +26,7 @@ namespace noobOsu.Game.Skins
             string numAsString = num.ToString();
 
             SpriteText numberTextures = new SpriteText(){
-                Font = GetHitcircleFont(hitObject.Radius / (float)SkinFontStore.INSTANCE?.GetCharacterScale( numAsString[0] )),
+                Font = GetHitcircleFont(hitObject.Radius / (double)SkinFontStore.INSTANCE?.GetCharacterScale( numAsString[0] )),
                 Text = numAsString,
             };
             return numberTextures;
@@ -133,9 +133,9 @@ namespace noobOsu.Game.Skins
             file.Close();
         }
 
-        private FontUsage GetHitcircleFont(float size)
+        private FontUsage GetHitcircleFont(double size)
         {
-            return new FontUsage(SkinFontStore.INSTANCE?.FontName, size: size);
+            return new FontUsage(SkinFontStore.INSTANCE?.FontName, size: (float)size);
         }
 
         private enum SkinLoadingSection

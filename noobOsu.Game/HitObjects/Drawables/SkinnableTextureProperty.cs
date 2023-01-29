@@ -38,8 +38,8 @@ namespace noobOsu.Game.HitObjects.Drawables
                 if (AutoCrop)
                     Drawable.Texture = TextureUtil.CropHitCircleIfNeeded(Drawable.Texture, Scale);
             
-                Drawable.Scale *= new Vector2(TextureUtil.GetScaleFor(Drawable.Texture)) * (float)(1/Scale);
-                Drawable.ScaleFactor = TextureUtil.GetScaleFor(Drawable.Texture) * (float)(1/Scale);
+                Drawable.Scale *= new Vector2(TextureUtil.GetScaleFor(Drawable.Texture)) * (1/Scale);
+                Drawable.ScaleFactor = TextureUtil.GetScaleFor(Drawable.Texture) * (1/Scale);
             }
             else
             {

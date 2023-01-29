@@ -3,8 +3,8 @@ namespace noobOsu.Game.Beatmaps
     public interface IBeatmapEvent
     {
         BeatmapEventType Type { get; }
-        float StartTime { get; }
-        float EndTime { get; }
+        double StartTime { get; }
+        double EndTime { get; }
         string Filename { get; }
         int xOffset { get; }
         int yOffset { get; }

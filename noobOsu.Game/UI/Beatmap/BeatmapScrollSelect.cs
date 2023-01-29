@@ -5,8 +5,6 @@ namespace noobOsu.Game.UI.Beatmap
 {
     public partial class BeatmapScrollSelect : BasicScrollSelect<BeatmapSet>
     {
-
-
         public void AddBeatmap(string dirPath)
         {
             AddItem(new BeatmapScrollSelectItem(dirPath, this));

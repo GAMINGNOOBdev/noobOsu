@@ -36,22 +36,22 @@ namespace noobOsu.Game.HitObjects
         }
 
         
-        public float GetLastAngle()
+        public double GetLastAngle()
         {
             if (pathPoints.Count < 2)
             {
                 return 0;
             }
-            return (float)VectorUtil.GetAngleBetween(pathPoints[pathPoints.Count-2].Position, GetLastPoint());
+            return VectorUtil.GetAngleBetween(pathPoints[pathPoints.Count-2].Position, GetLastPoint());
         }
 
-        public float GetFirstAngle()
+        public double GetFirstAngle()
         {
             if (pathPoints.Count < 2)
             {
                 return 0;
             }
-            return (float)VectorUtil.GetAngleBetween(pathPoints[1].Position, pathPoints[0].Position);
+            return VectorUtil.GetAngleBetween(pathPoints[1].Position, pathPoints[0].Position);
         }
 
         public void AddAnchorPoint(string p)

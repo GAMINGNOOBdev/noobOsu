@@ -1,4 +1,5 @@
-﻿using osu.Framework.Allocation;
+﻿using osuTK;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Screens;
 using noobOsu.Game.Screens;
@@ -20,6 +21,8 @@ namespace noobOsu.Game
         private void load()
         {
             Child = ScreenStack = new ScreenStack { RelativeSizeAxes = Axes.Both };
+            
+            GlobalGameCursor.DrawCursor = true;
         }
 
         protected override void LoadComplete()

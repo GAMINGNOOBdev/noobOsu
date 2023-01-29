@@ -13,8 +13,8 @@ namespace noobOsu.Game.HitObjects
     public partial class SliderEndCircle : CompositeDrawable
     {   
         private HitObjectSprite sliderEndCircle, reverseArrow;
-        private float totalVisibleTime, fadeTime, CurrentTime = 0;
-        private float waitingTime, hitWindow;
+        private double totalVisibleTime, fadeTime, CurrentTime = 0;
+        private double waitingTime, hitWindow;
         private int RepeatMax, LastRepeatTime = 0;
         private bool Started, Ended;
         private Slider ParentSlider;
@@ -43,7 +43,7 @@ namespace noobOsu.Game.HitObjects
                 Origin = Anchor.Centre,
                 Size = new Vector2(1f),
             };
-            sliderEndCircle.Scale = new Vector2(ParentSlider.Radius*2);
+            sliderEndCircle.Scale = new Vector2((float)ParentSlider.Radius*2);
             ParentSlider.AddProperty(new SkinnableTextureProperty(sliderEndCircle, "sliderendcircle"));
 
             reverseArrow = new HitObjectSprite(){
@@ -52,19 +52,19 @@ namespace noobOsu.Game.HitObjects
                 Origin = Anchor.Centre,
                 Size = new Vector2(1f),
             };
-            reverseArrow.Scale = new Vector2(ParentSlider.Radius*2);
+            reverseArrow.Scale = new Vector2((float)ParentSlider.Radius*2);
             ParentSlider.AddProperty(new SkinnableTextureProperty(reverseArrow, "reversearrow"));
 
             sliderEndCircle.Alpha = 0f;
             reverseArrow.Alpha = 0f;
 
-            Rotation = ParentSlider.HitObject.Path.GetLastAngle();
+            Rotation = (float)ParentSlider.HitObject.Path.GetLastAngle();
 
             AddInternal(sliderEndCircle);
             AddInternal(reverseArrow);
         }
 
-        public void Update(float delta)
+        public void Update(double delta)
         {
             CurrentTime += delta;
             if (CurrentTime >= LastRepeatTime)

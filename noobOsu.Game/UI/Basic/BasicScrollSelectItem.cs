@@ -21,6 +21,9 @@ namespace noobOsu.Game.UI.Basic
         // name of this item
         string ItemName { get; }
 
+        // size of this item in the y direction
+        float SizeY { get; }
+
         // state of this item
         ScrollSelectItemState State { get; }
 
@@ -34,7 +37,7 @@ namespace noobOsu.Game.UI.Basic
 
     public partial class BasicScrollSelectItem<T> : CompositeDrawable, IScrollSelectItem<T>
     {
-        protected IScrollSelect<T> ParentSelect { get; private set; }
+        public IScrollSelect<T> ParentSelect { get; private set; }
         private ScrollSelectItemState state = ScrollSelectItemState.Inactive;
         private T itemValue;
 
@@ -46,6 +49,7 @@ namespace noobOsu.Game.UI.Basic
             Origin = Anchor.Centre,
         };
 
+        public float SizeY { get; set; }
         public T Value {
             get => itemValue;
             private set

@@ -20,10 +20,10 @@ namespace noobOsu.Game.HitObjects
         private SliderBall Ball;
         private ColoredPath path;
         private bool startApproach, approachEnded, started, circleEnded;
-        private float totalVisibleTime, fadeTime, currentTime;
-        private float waitingTime, currentDelayTime, hitWindow;
+        private double totalVisibleTime, fadeTime, currentTime;
+        private double waitingTime, currentDelayTime, hitWindow;
         private bool ending = false;
-        public float Duration { get; private set; }
+        public double Duration { get; private set; }
 
         public Slider(HitObject hitObj, IBeatmap beatmap, IBeatmapDifficulty difficulty, IColorStore colors) : base(hitObj, colors, beatmap)
         {
@@ -51,7 +51,7 @@ namespace noobOsu.Game.HitObjects
         {
             path = new ColoredPath();
             path.RelativeSizeAxes = Axes.None;
-            path.PathRadius = Radius;
+            path.PathRadius = (float)Radius;
             path.Vertices = HitObject.Path.GetCurvePoints();
             path.OriginPosition = path.PositionInBoundingBox(Vector2.Zero);
             path.Alpha = 0f;
@@ -136,7 +136,7 @@ namespace noobOsu.Game.HitObjects
             if (circleEnded) return;
             if (currentDelayTime < waitingTime)
             {
-                currentDelayTime += (float)Clock.ElapsedFrameTime;
+                currentDelayTime += Clock.ElapsedFrameTime;
             }
             else
             {
@@ -146,7 +146,7 @@ namespace noobOsu.Game.HitObjects
 
             if (startApproach && !approachEnded)
             {
-                currentTime += (float)Clock.ElapsedFrameTime;
+                currentTime += Clock.ElapsedFrameTime;
 
                 if (currentTime >= totalVisibleTime)
                 {
@@ -162,15 +162,15 @@ namespace noobOsu.Game.HitObjects
 
             if (approachEnded)
             {
-                currentTime += (float)Clock.ElapsedFrameTime;
+                currentTime += Clock.ElapsedFrameTime;
                 double progress = currentTime / (Duration);
                 progress = Math.Clamp(progress, 0, 1);
                 
                 Ball.Update(progress);
 
-                sliderStart.Update((float)Clock.ElapsedFrameTime);
+                sliderStart.Update(Clock.ElapsedFrameTime);
                 if (sliderEnd != null)
-                    sliderEnd.Update((float)Clock.ElapsedFrameTime);
+                    sliderEnd.Update(Clock.ElapsedFrameTime);
                 
                 if (currentTime >= Duration)
                 {

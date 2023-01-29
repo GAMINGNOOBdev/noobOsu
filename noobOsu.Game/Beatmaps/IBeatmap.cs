@@ -10,6 +10,7 @@ namespace noobOsu.Game.Beatmaps
     public interface IBeatmap
     {
         bool Started { get; set; }
+        IBeatmapGeneral CurrentMap { get; }
 
         void RemoveObject(DrawableHitObject obj);
 
@@ -17,7 +18,7 @@ namespace noobOsu.Game.Beatmaps
 
         BeatmapInfo GetInfo();
 
-        void LoadBeatmap(string path);
+        void LoadBeatmap(IBeatmapGeneral map);
         void Load(AudioManager audioManager, TextureStore Textures);
 
         Track GetAudio();

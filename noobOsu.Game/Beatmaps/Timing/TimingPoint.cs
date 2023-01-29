@@ -7,11 +7,14 @@ namespace noobOsu.Game.Beatmaps.Timing
         // used for cloning objects
         private readonly string ParsedExpression;
 
+        // used for debug info
+        private readonly string[] SplitExpression;
+
         // time (in ms) of this current info point
         public int TimeStamp { get; set; }
 
         // for inherited points: inversed slider velocity multiplies of this timestamp until it is changed
-        public float BeatLength { get; set; }
+        public double BeatLength { get; set; }
 
         // amount of beats in one measure, only used by uninherited points
         public int Meter { get; set; }
@@ -40,9 +43,11 @@ namespace noobOsu.Game.Beatmaps.Timing
                 ParsedExpression = null;
                 return;
             }
+
+            SplitExpression = object_values;
             
-            TimeStamp = (int)float.Parse(object_values[0]);
-            BeatLength = float.Parse(object_values[1]);
+            TimeStamp = (int)double.Parse(object_values[0], System.Globalization.CultureInfo.InvariantCulture);
+            BeatLength = double.Parse(object_values[1], System.Globalization.CultureInfo.InvariantCulture);
             
             Meter = int.Parse(object_values[2]);
             SampleSet = int.Parse(object_values[3]);
@@ -53,5 +58,13 @@ namespace noobOsu.Game.Beatmaps.Timing
         }
 
         public ITimingPoint Clone() => new TimingPoint(ParsedExpression);
+
+        public override string ToString()
+        {
+            if (Uninherited == 0)
+                return "Timing( " + TimeStamp + " ): {BeatLen: " + BeatLength + ", Inherited: true }";
+            else
+                return "Timing( " + TimeStamp + " ): {BeatLen: " + BeatLength + ", Inherited: false, BPM: " + 1 / BeatLength * 60000 + " }";
+        }
     }
 }

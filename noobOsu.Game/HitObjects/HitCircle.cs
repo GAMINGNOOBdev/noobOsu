@@ -12,8 +12,8 @@ namespace noobOsu.Game.HitObjects
     {
         private HitObjectSprite approachCircle, hitcircleArea, hitcircleOverlay;
         private bool startApproach, approachEnded, started, circleEnded;
-        private float totalVisibleTime, fadeTime, currentTime;
-        private float waitingTime, currentDelayTime, hitWindow;
+        private double totalVisibleTime, fadeTime, currentTime;
+        private double waitingTime, currentDelayTime, hitWindow;
         private bool ending = false;
 
         public HitCircle(HitObject hitObj, IBeatmap beatmap, IBeatmapDifficulty difficulty, IColorStore colors) : base(hitObj, colors, beatmap)
@@ -43,7 +43,7 @@ namespace noobOsu.Game.HitObjects
                 Origin = Anchor.Centre,
                 Size = new Vector2(1f),
             };
-            approachCircle.Scale = new Vector2(Radius*2 * 4f);
+            approachCircle.Scale = new Vector2((float)Radius*2 * 4f);
             approachCircle.Colour = Color;
             AddProperty(new SkinnableTextureProperty(approachCircle, "approachcircle"));
 
@@ -53,7 +53,7 @@ namespace noobOsu.Game.HitObjects
                 Origin = Anchor.Centre,
                 Size = new Vector2(1f),
             };
-            hitcircleArea.Scale = new Vector2(Radius*2);
+            hitcircleArea.Scale = new Vector2((float)Radius*2);
             hitcircleArea.Colour = Color;
             AddProperty(new SkinnableTextureProperty(hitcircleArea, "hitcircle", true));
 
@@ -63,7 +63,7 @@ namespace noobOsu.Game.HitObjects
                 Origin = Anchor.Centre,
                 Size = new Vector2(1f),
             };
-            hitcircleOverlay.Scale = new Vector2(Radius*2);
+            hitcircleOverlay.Scale = new Vector2((float)Radius*2);
             AddProperty(new SkinnableTextureProperty(hitcircleOverlay, "hitcircleoverlay"));
 
             AddProperty(new SkinnableHitcircleNumberProperty(this, ComboNumber, "numbers"));
@@ -87,7 +87,7 @@ namespace noobOsu.Game.HitObjects
             if (started) return;
             started = true;
             startApproach = true;
-            approachCircle.ScaleTo(Radius*2 * approachCircle.ScaleFactor, totalVisibleTime);
+            approachCircle.ScaleTo((float)Radius*2 * (float)approachCircle.ScaleFactor, totalVisibleTime);
 
             approachCircle.FadeInFromZero(fadeTime);
             hitcircleArea.FadeInFromZero(fadeTime);
@@ -102,8 +102,8 @@ namespace noobOsu.Game.HitObjects
             
             hitcircleArea.FadeOutFromOne(200);
             hitcircleOverlay.FadeOutFromOne(200);
-            hitcircleArea.ScaleTo(Radius*2 * 1.5f * hitcircleArea.ScaleFactor, 200);
-            hitcircleOverlay.ScaleTo(Radius*2 * 1.5f * hitcircleOverlay.ScaleFactor, 200);
+            hitcircleArea.ScaleTo((float)Radius*2 * 1.5f * (float)hitcircleArea.ScaleFactor, 200);
+            hitcircleOverlay.ScaleTo((float)Radius*2 * 1.5f * (float)hitcircleOverlay.ScaleFactor, 200);
             approachCircle.Alpha = 0f;
             CircleNumbers.Alpha = 0f;
         }

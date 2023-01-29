@@ -21,24 +21,27 @@ namespace noobOsu.Game.Beatmaps
         private Track mapTrack;
 
         public List<HitObject> HitObjects => hitObjects;
+        public IBeatmapGeneral CurrentMap { get; private set; }
         public DrawableTrack MapAudio => mapAudio;
         public bool Started { get; set; } = false;
 
-        public Beatmap(string path)
+        public Beatmap(IBeatmapGeneral map)
         {
-            if (path == null) return;
-            relative_path = path.Substring(0, path.LastIndexOf('/'));
-            ReadBeatmap(path);
+            if (map == null) return;
+            relative_path = "Songs/" + map.ParentSet.SetID + " " + map.ParentSet.SetName;
+            CurrentMap = map;
+            ReadBeatmap(map);
         }
 
         public BeatmapInfo GetInfo() => info;
 
-        public void LoadBeatmap(string path)
+        public void LoadBeatmap(IBeatmapGeneral map)
         {
             ClearData();
-            if (path == null) return;
-            relative_path = path.Substring(0, path.LastIndexOf('/'));
-            ReadBeatmap(path);
+            if (map == null) return;
+            relative_path = "Songs/" + map.ParentSet.SetID + " " + map.ParentSet.SetName;
+            CurrentMap = map;
+            ReadBeatmap(map);
         }
 
         public void Load(AudioManager audioManager, TextureStore Textures)
@@ -85,9 +88,9 @@ namespace noobOsu.Game.Beatmaps
             info = new BeatmapInfo();
         }
 
-        private void ReadBeatmap(string path)
+        private void ReadBeatmap(IBeatmapGeneral path)
         {
-            using (StreamReader file = new StreamReader(path))
+            using (StreamReader file = new StreamReader(relative_path + "/" + path.AsFilename()))
             {
                 string current_line;
                 current_line = file.ReadLine();
@@ -161,11 +164,11 @@ namespace noobOsu.Game.Beatmaps
                 }
                 if (values[0].Equals("AudioLeadIn"))
                 {
-                    info.AudioLeadIn = float.Parse(values[1]);
+                    info.AudioLeadIn = double.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture);
                 }
                 if (values[0].Equals("AudioLength"))
                 {
-                    info.AudioLength = float.Parse(values[1]);
+                    info.AudioLength = double.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
         }
@@ -210,27 +213,27 @@ namespace noobOsu.Game.Beatmaps
 
                 if (values[0].Equals("HPDrainRate"))
                 {
-                    ((BeatmapDifficulty)info.Difficulty).HP = float.Parse(values[1]);
+                    ((BeatmapDifficulty)info.Difficulty).HP = double.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture);
                 }
                 if (values[0].Equals("CircleSize"))
                 {
-                    ((BeatmapDifficulty)info.Difficulty).CS = float.Parse(values[1]);
+                    ((BeatmapDifficulty)info.Difficulty).CS = double.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture);
                 }
                 if (values[0].Equals("OverallDifficulty"))
                 {
-                    ((BeatmapDifficulty)info.Difficulty).OD = float.Parse(values[1]);
+                    ((BeatmapDifficulty)info.Difficulty).OD = double.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture);
                 }
                 if (values[0].Equals("ApproachRate"))
                 {
-                    ((BeatmapDifficulty)info.Difficulty).AR = float.Parse(values[1]);
+                    ((BeatmapDifficulty)info.Difficulty).AR = double.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture);
                 }
                 if (values[0].Equals("SliderMultiplier"))
                 {
-                    ((BeatmapDifficulty)info.Difficulty).SliderMultiplier = float.Parse(values[1]);
+                    ((BeatmapDifficulty)info.Difficulty).SliderMultiplier = double.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture);
                 }
                 if (values[0].Equals("SliderTickRate"))
                 {
-                    ((BeatmapDifficulty)info.Difficulty).SliderTickRate = float.Parse(values[1]);
+                    ((BeatmapDifficulty)info.Difficulty).SliderTickRate = double.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
         }
@@ -245,7 +248,7 @@ namespace noobOsu.Game.Beatmaps
                 if (line.StartsWith("//")) continue;
                 line = Util.StringUtil.RemoveComments(line);
 
-                info.Timing.AddTimingPoint(new TimingPoint(line));
+                info.Timing.AddTimingPoint(new TimingPoint(Util.StringUtil.RemoveWhitespaces(line)));
             }
             info.Timing.CalculateBPM();
         }
@@ -279,7 +282,7 @@ namespace noobOsu.Game.Beatmaps
                 if (line.StartsWith("//")) continue;
                 line = Util.StringUtil.RemoveComments(line);
 
-                hitObjects.Add( new HitObject(line) );
+                hitObjects.Add( new HitObject(line, this) );
             }
         }
     }

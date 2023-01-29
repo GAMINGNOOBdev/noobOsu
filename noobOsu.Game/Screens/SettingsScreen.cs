@@ -9,6 +9,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
 using noobOsu.Game.Skins.Drawables;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 
 namespace noobOsu.Game.Screens
@@ -18,6 +19,8 @@ namespace noobOsu.Game.Screens
         private Box box;
         private SkinSelectDropdown SkinSelect;
         private BasicCheckbox useBeatmapSkin, useBeatmapHitsound, useBeatmapColor;
+        private BasicSliderBar<int> beatmapBgDim;
+        private SpriteText mapbgdimInfo;
         private BasicButton backButton;
 
         public SettingsScreen() {}
@@ -25,11 +28,9 @@ namespace noobOsu.Game.Screens
         [BackgroundDependencyLoader]
         private void load()
         {
-            if (GameSettings.INSTANCE == null) new GameSettings();
-
             box = new Box()
             {
-                Colour = Color4.Red,
+                Colour = new Color4(0.01f, 0.01f, 0.01f, 1.0f),
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,
@@ -74,6 +75,24 @@ namespace noobOsu.Game.Screens
             useBeatmapHitsound.LabelText = "Use Beatmap Hitsounds";
             useBeatmapHitsound.Current.BindTo(GameSettings.INSTANCE.UseBeatmapHitsounds);
 
+            mapbgdimInfo = new SpriteText()
+            {
+                Origin = Anchor.TopLeft,
+                Position = new Vector2(0, 130),
+                Font = FontUsage.Default.With(size: 30),
+            };
+
+            beatmapBgDim = new BasicSliderBar<int>()
+            {
+                Origin = Anchor.TopLeft,
+                Position = new Vector2(0, 160),
+                Size = new Vector2(500, 30),
+            };
+            beatmapBgDim.Current.BindTo(GameSettings.INSTANCE.BeatmapBackgroundDim);
+            beatmapBgDim.Current.BindValueChanged((val) => {
+                mapbgdimInfo.Text = "Background dim: " + val.NewValue + "%";
+            }, true);
+
             backButton = new BasicButton()
             {
                 Origin = Anchor.BottomLeft,
@@ -90,6 +109,8 @@ namespace noobOsu.Game.Screens
             AddInternal(useBeatmapSkin);
             AddInternal(useBeatmapColor);
             AddInternal(useBeatmapHitsound);
+            AddInternal(mapbgdimInfo);
+            AddInternal(beatmapBgDim);
             AddInternal(backButton);
             AddInternal(SkinSelect);
 

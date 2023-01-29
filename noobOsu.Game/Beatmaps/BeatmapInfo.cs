@@ -30,7 +30,7 @@ namespace noobOsu.Game.Beatmaps
         public string AudioFilename { get; set; } = "audio.mp3";
 
         // time (in ms) to spend before starting the audio
-        public float AudioLeadIn { get; set; } = 0f;
+        public double AudioLeadIn { get; set; } = 0f;
 
         // deprecated audio hash
         public string AudioHash { get; set; } = null;
@@ -45,8 +45,8 @@ namespace noobOsu.Game.Beatmaps
         public string SampleSet { get; set; } = "Normal";
 
         // Length of the audio file in ms, needs to be set after getting the audio file
-        public float AudioLength { get; set; } = -1;
+        public double AudioLength { get; set; } = -1;
 
-        public float GetAudioLength() => AudioLength;
+        public double GetAudioLength() => AudioLength;
     }
 }

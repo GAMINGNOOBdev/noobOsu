@@ -17,11 +17,8 @@ namespace noobOsu.Game.Screens
     {
         public static MapSelectScreen INSTANCE { get; private set; }
 
-        private BeatmapDropdown dropdown;
-        private BasicButton startMapButton;
+        private BeatmapScrollSelect beatmapSelect;
         private BasicButton settingsButton;
-        private string SelectedSongDifficulty => SelectedSongFolder;
-        private string SelectedSongFolder;
 
         public MapSelectScreen()
         {
@@ -32,38 +29,34 @@ namespace noobOsu.Game.Screens
         [BackgroundDependencyLoader]
         private void load()
         {
-            startMapButton = new BasicButton();
-            startMapButton.Text = "Start Beatmap";
-            startMapButton.X = 200;
-            startMapButton.Y = 20;
-            startMapButton.Size = new osuTK.Vector2(20 * "Start Beatmap".Length, 20);
-            startMapButton.Action = () => {
-                SelectedSongFolder = dropdown.Current.Value;
-                if (!string.IsNullOrEmpty(SelectedSongFolder))
-                    LoadMap();
-            };
-
             settingsButton = new BasicButton();
             settingsButton.Text = "Settings";
-            settingsButton.X = 200;
-            settingsButton.Y = 50;
+            settingsButton.Anchor = Anchor.BottomLeft;
+            settingsButton.Origin = Anchor.BottomLeft;
             settingsButton.Size = new osuTK.Vector2(20 * "Settings".Length, 20);
+            settingsButton.Scale = new osuTK.Vector2(2f);
             settingsButton.Action = () => {
                 noobOsuGame.INSTANCE.ScreenStack.Push(new SettingsScreen());
             };
 
-            dropdown = new BeatmapDropdown();
-            dropdown.X = 500;
-            dropdown.Y = 20;
+            beatmapSelect = new BeatmapScrollSelect(){
+                RelativeSizeAxes = Axes.Both,
+                RelativePositionAxes = Axes.Both,
+                Size = new osuTK.Vector2(0.5f, 1f),
+                X = 0.5f,
+                Y = 0f,
+            };
             foreach (string s in Directory.EnumerateDirectories("Songs/", "*", SearchOption.TopDirectoryOnly))
             {
                 string songName = s.Substring("Songs/".Length);
-                dropdown.AddMap(songName);
+                if (char.IsDigit(songName[0]))
+                    beatmapSelect.AddBeatmap(songName);
             }
+            beatmapSelect.FinishAdding();
+            beatmapSelect.SelectRandom();
 
-            AddInternal(startMapButton);
             AddInternal(settingsButton);
-            AddInternal(dropdown);
+            AddInternal(beatmapSelect);
         }
 
         protected override void LoadComplete()
@@ -71,11 +64,20 @@ namespace noobOsu.Game.Screens
             base.LoadComplete();
         }
 
-        private void LoadMap()
+        public void LoadMap(IBeatmapGeneral map, bool debug)
         {
-            BeatmapRenderScreen ms = new BeatmapRenderScreen();
-            ms.SetBeatmapPath("Songs/" + SelectedSongFolder + "/" + SelectedSongDifficulty + ".osu");
-            noobOsuGame.INSTANCE.ScreenStack.Push(ms);
+            if (!debug)
+            {
+                BeatmapRenderScreen ms = new BeatmapRenderScreen();
+                ms.SetMap(map);
+                noobOsuGame.INSTANCE.ScreenStack.Push(ms);
+            }
+            else
+            {
+                BeatmapDebugInfoScreen ms = new BeatmapDebugInfoScreen();
+                ms.SetMap(map);
+                noobOsuGame.INSTANCE.ScreenStack.Push(ms);
+            }
         }
 
         protected override void OnKeyUp(KeyUpEvent e)

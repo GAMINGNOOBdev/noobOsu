@@ -27,7 +27,7 @@ namespace noobOsu.Game.Beatmaps
         string AudioFilename { get; set; }
 
         // time (in ms) to spend before starting the audio
-        float AudioLeadIn { get; set; }
+        double AudioLeadIn { get; set; }
 
         // deprecated audio hash
         string AudioHash { get; set; }

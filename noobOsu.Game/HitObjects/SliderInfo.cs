@@ -6,8 +6,8 @@ namespace noobOsu.Game.HitObjects
     {
         PathType CurveType { get; }
         int SlideRepeat { get; }
-        float Length { get; }
-        float TotalSliderSpan { get; }
+        double Length { get; }
+        double TotalSliderSpan { get; }
         ISliderRepeatInfo GetRepeatTimingInfo();
     }
 
@@ -15,8 +15,8 @@ namespace noobOsu.Game.HitObjects
     {
         public PathType CurveType { get; set; } = PathType.None;
         public int SlideRepeat { get; set; } = 0;
-        public float Length { get; set; } = 10f;
-        public float TotalSliderSpan { get; set; } = 0f;
+        public double Length { get; set; } = 10f;
+        public double TotalSliderSpan { get; set; } = 0f;
         public readonly SliderRepeatInfo RepeatTimingInfo = new SliderRepeatInfo();
 
         public ISliderRepeatInfo GetRepeatTimingInfo() => RepeatTimingInfo;

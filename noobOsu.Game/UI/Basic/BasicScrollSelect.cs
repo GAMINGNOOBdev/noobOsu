@@ -12,11 +12,14 @@ namespace noobOsu.Game.UI.Basic
     {
         IReadOnlyList<IScrollSelectItem<T>> Items { get; }
 
+        void InvalidateItems();
+
         void Select(IScrollSelectItem<T> item);
         void SelectRandom();
         IScrollSelectItem<T> GetSelected();
 
         void AddItem(IScrollSelectItem<T> item);
+        void FinishAdding();
         IScrollSelectItem<T> GetItem(string name);
         void RemoveItem(IScrollSelectItem<T> item);
         void RemoveItem(string name);
@@ -24,24 +27,40 @@ namespace noobOsu.Game.UI.Basic
 
     public partial class BasicScrollSelect<T> : CompositeDrawable, IScrollSelect<T>
     {
-        private const int ITEM_SPACING = 20;
+        public static int ITEM_SPACING = 10;
+
+        private static Drawable MakeEmptyDrawable(float y) => new Container(){
+            Width=0,
+            Height=0,
+            Y = y,
+        };
 
         private readonly List<IScrollSelectItem<T>> items = new List<IScrollSelectItem<T>>();
         private Vector2 nextItemPosition = new Vector2(0);
-        private readonly Container<Drawable> Contents;
+        private readonly BasicScrollContainer<Drawable> Contents;
         private IScrollSelectItem<T> currentSelected;
 
         public IReadOnlyList<IScrollSelectItem<T>> Items { get => items; private set {} }
 
         public BasicScrollSelect() : base()
         {
-            RelativeSizeAxes = Axes.X;
-            Width = 200;
-            Height = 700;
-
-            InternalChild = Contents = Contents = new Container<Drawable>{
-                RelativeSizeAxes = Axes.Both
+            InternalChild = Contents = Contents = new BasicScrollContainer<Drawable>(Direction.Vertical){
+                RelativeSizeAxes = Axes.Both,
             };
+        }
+
+        public void InvalidateItems()
+        {
+            Contents.Clear(false);
+            nextItemPosition = new Vector2(0);
+            foreach (IScrollSelectItem<T> item in items)
+            {
+                ((Drawable)item).Position = nextItemPosition;
+                nextItemPosition.Y += item.SizeY + ITEM_SPACING;
+
+                Contents.Add((Drawable)item);
+            }
+            FinishAdding();
         }
 
         public void Select(IScrollSelectItem<T> item)
@@ -72,14 +91,15 @@ namespace noobOsu.Game.UI.Basic
             if (GetItem(item.ItemName) == null)
             {
                 ((Drawable)item).Position = nextItemPosition;
-                nextItemPosition += ((Drawable)item).Size;
-                nextItemPosition.Y += ITEM_SPACING;
-                nextItemPosition.X = 0;
+                nextItemPosition.Y += item.SizeY + ITEM_SPACING;
 
                 items.Add(item);
                 Contents.Add((Drawable)item);
             }
         }
+
+        // we have to add an empty drawable because if the last element gets bigger by expansion the scroll container still stays the same
+        public void FinishAdding() => Contents.Add(MakeEmptyDrawable(nextItemPosition.Y));
 
         public IScrollSelectItem<T> GetItem(string name)
         {

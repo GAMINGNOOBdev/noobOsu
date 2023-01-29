@@ -23,7 +23,7 @@ namespace noobOsu.Game.HitObjects.Drawables
         public readonly IBeatmap ParentMap;
         public SpriteText CircleNumbers { get; private set; }
         public ITimingPoint TimingInfo => timingPoint;
-        public float Radius { get; protected set; }
+        public double Radius { get; protected set; }
 
         protected DrawableHitObject(HitObject hitObj, IColorStore colors, IBeatmap beatmap)
         {
@@ -45,7 +45,7 @@ namespace noobOsu.Game.HitObjects.Drawables
                 timingPoint = null;
             }
             else
-                if (timingPoint.BeatLength.Equals(float.NaN))
+                if (timingPoint.BeatLength.Equals(double.NaN))
                     timingPoint = null;
                 else
                     timingPoint = (TimingPoint)timingPoint.Clone();
@@ -53,7 +53,7 @@ namespace noobOsu.Game.HitObjects.Drawables
             ParentMap = beatmap;
 
             if (HitObject.isSlider())
-                HitObject.setSliderInfo(beatmap, timingPoint);
+                HitObject.setSliderInfo(timingPoint);
 
             this.Depth = HitObject.Time;
 

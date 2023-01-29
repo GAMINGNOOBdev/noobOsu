@@ -11,8 +11,39 @@ namespace noobOsu.Game.Util
             {
                 newString = newString.Substring(0, newString.IndexOf("//"));
             }
+            newString = newString.Trim();
 
             return newString;
+        }
+
+        public static string RemoveQuotes(string src)
+        {
+            string newString = src;
+            newString = src.Replace("'", string.Empty);
+            newString = newString.Replace("\"", string.Empty);
+            newString = newString.Replace("''", string.Empty);
+            return newString;
+        }
+
+        public static string RemoveWhitespaces(string src)
+        {
+            string newString = src;
+            newString = src.Replace(" ", string.Empty);
+            newString = newString.Replace("\t", string.Empty);
+            newString = newString.Replace(System.Environment.NewLine, string.Empty);
+            return newString;
+        }
+
+        public static string ArrayToString<T>(T[] array)
+        {
+            string result = "Array[ ";
+            foreach (T t in array)
+            {
+                result += t.ToString() + " | ";
+            }
+            result = result.Substring(0, result.Length-3);
+            result += " ]";
+            return result;
         }
 
         public static string ListToString<T>(IReadOnlyList<T> list)
@@ -22,6 +53,7 @@ namespace noobOsu.Game.Util
             {
                 result += t.ToString() + " | ";
             }
+            result = result.Substring(0, result.Length-3);
             result += " }";
             return result;
         }

@@ -3,39 +3,39 @@ namespace noobOsu.Game.Beatmaps
     public interface IBeatmapDifficulty
     {
         /// Approach Rate
-        float AR { get; }
+        double AR { get; }
 
         // Circle Size
-        float CS { get; }
+        double CS { get; }
 
         // Overall Difficulty
-        float OD { get; }
+        double OD { get; }
 
         // Health Drain
-        float HP { get; }
+        double HP { get; }
 
         // Slider velocity
-        float SliderMultiplier { get; }
+        double SliderMultiplier { get; }
 
         // Slider tick rate
-        float SliderTickRate { get; }
+        double SliderTickRate { get; }
     }
 
     public class BeatmapDifficulty : IBeatmapDifficulty
     {
-        public float AR { get; set; } = 5f;
+        public double AR { get; set; } = 5f;
 
-        public float CS { get; set; } = 5f;
+        public double CS { get; set; } = 5f;
 
-        public float OD { get; set; } = 5f;
+        public double OD { get; set; } = 5f;
 
-        public float HP { get; set; } = 5f;
+        public double HP { get; set; } = 5f;
 
-        public float SliderMultiplier { get; set; } = 1f;
+        public double SliderMultiplier { get; set; } = 1f;
 
-        public float SliderTickRate { get; set; } = 1f;
+        public double SliderTickRate { get; set; } = 1f;
 
-        public static float ScaleWithRange(float value, float maxVal, float midVal, float minVal)
+        public static double ScaleWithRange(double value, double maxVal, double midVal, double minVal)
         {
             if (value < 5f) return midVal + (maxVal - minVal) * (5 - value) / 5;
             if (value > 5f) return midVal - (midVal - minVal) * (value - 5) / 5;

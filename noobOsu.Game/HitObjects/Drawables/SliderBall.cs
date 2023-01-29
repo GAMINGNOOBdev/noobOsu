@@ -23,7 +23,7 @@ namespace noobOsu.Game.HitObjects
         private double CurrentProgress;
         private int RepeatMax;
         private bool Started = false, Ended = false;
-        private float fadeTime;
+        private double fadeTime;
         private Vector2 LastPosition;
 
         public SliderBall(Slider parent)
@@ -44,7 +44,7 @@ namespace noobOsu.Game.HitObjects
                 Origin = Anchor.Centre,
                 Size = new Vector2(1f),
             };
-            Ball.Scale = new Vector2(ParentSlider.Radius*2);
+            Ball.Scale = new Vector2((float)ParentSlider.Radius*2);
             BallColor.BindValueChanged( (val) => {
                 Ball.Colour = val.NewValue;
             });
@@ -57,7 +57,7 @@ namespace noobOsu.Game.HitObjects
                 Origin = Anchor.Centre,
                 Size = new Vector2(1f),
             };
-            FollowCircle.Scale = new Vector2(ParentSlider.Radius*2);
+            FollowCircle.Scale = new Vector2((float)ParentSlider.Radius*2);
             ParentSlider.AddProperty(new SkinnableTextureProperty(FollowCircle, "sliderfollowcircle"));
 
             ParentSlider.AddProperty(new SkinnableBoolProperty(RotateFollowBall, true, "SliderBallFlip"));
@@ -75,8 +75,8 @@ namespace noobOsu.Game.HitObjects
             Started = true;
             Ball.Alpha = 1f;
             FollowCircle.Alpha = 1f;
-            FollowCircle.ScaleTo(ParentSlider.Radius*2 * 0.75f * FollowCircle.ScaleFactor);
-            FollowCircle.ScaleTo(ParentSlider.Radius*2 * FollowCircle.ScaleFactor, fadeTime);
+            FollowCircle.ScaleTo((float)ParentSlider.Radius*2 * 0.75f * (float)FollowCircle.ScaleFactor);
+            FollowCircle.ScaleTo((float)ParentSlider.Radius*2 * (float)FollowCircle.ScaleFactor, fadeTime);
         }
 
         public void End()
@@ -86,7 +86,7 @@ namespace noobOsu.Game.HitObjects
             
             Ball.Alpha = 0f;
             FollowCircle.FadeOutFromOne(200f);
-            FollowCircle.ScaleTo(ParentSlider.Radius*2 * 0.75f * FollowCircle.ScaleFactor, 200f);
+            FollowCircle.ScaleTo((float)ParentSlider.Radius*2 * 0.75f * (float)FollowCircle.ScaleFactor, 200f);
         }
 
         public void DisposeResources()

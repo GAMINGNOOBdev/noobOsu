@@ -18,7 +18,7 @@ namespace noobOsu.Game.Beatmaps
                 e.Type = IBeatmapEvent.ToEventType(object_values[0]);
                 if (e.Type == BeatmapEventType.None)
                     throw new FormatException("invalid event string format \"" + eventString + "\"");
-                e.StartTime = float.Parse(object_values[1]);
+                e.StartTime = double.Parse(object_values[1], System.Globalization.CultureInfo.InvariantCulture);
 
                 if (e.Type.Equals(BeatmapEventType.Background) && e.StartTime != 0) return;
 
@@ -30,7 +30,7 @@ namespace noobOsu.Game.Beatmaps
                 }
                 else
                 {
-                    e.EndTime = float.Parse(object_values[2]);
+                    e.EndTime = double.Parse(object_values[2], System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 events.Add(e);
@@ -44,7 +44,7 @@ namespace noobOsu.Game.Beatmaps
         public string GetBackgroundIfPresent() {
             foreach (IBeatmapEvent e in events)
             {
-                if (e.Type == BeatmapEventType.Background) return e.Filename;
+                if (e.Type == BeatmapEventType.Background) return Util.StringUtil.RemoveQuotes(e.Filename);
             }
             return string.Empty;
         }
@@ -53,8 +53,8 @@ namespace noobOsu.Game.Beatmaps
     public class BeatmapEvent : IBeatmapEvent
     {
         public BeatmapEventType Type { get; set; }
-        public float StartTime { get; set; }
-        public float EndTime { get; set; }
+        public double StartTime { get; set; }
+        public double EndTime { get; set; }
         public string Filename { get; set; }
         public int xOffset { get; set; }
         public int yOffset { get; set; }

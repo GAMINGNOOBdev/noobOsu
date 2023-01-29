@@ -1,10 +1,12 @@
 using osuTK;
+using noobOsu.Game.UI;
 using noobOsu.Resources;
 using noobOsu.Game.Stores;
 using noobOsu.Game.Settings;
 using osu.Framework.Graphics;
 using osu.Framework.IO.Stores;
 using osu.Framework.Allocation;
+using osu.Framework.Input;
 using osu.Framework.Graphics.Containers;
 
 namespace noobOsu.Game
@@ -17,6 +19,8 @@ namespace noobOsu.Game
         private ResourceStore<byte[]> tracksContianer, samplesContainer;
         private noobOsuAudioManager clientAudioManager;
         private GameSettings Settings;
+
+        public static GameCursorContainer GlobalGameCursor;
 
         protected noobOsuGameBase()
         {
@@ -47,7 +51,14 @@ namespace noobOsu.Game
             Textures.AddTextureSource(new ExternalTextureStore());
             Fonts.AddTextureSource(new SkinFontStore());
 
+            base.Content.Add(
+                GlobalGameCursor = new GameCursorContainer(){
+                    RelativeSizeAxes = Axes.Both,
+                }
+            );
+
             Host.Window.Title = "noobOsu";
+            Host.Window.CursorState |= osu.Framework.Platform.CursorState.Hidden;
         }
 
         protected override bool OnExiting()
