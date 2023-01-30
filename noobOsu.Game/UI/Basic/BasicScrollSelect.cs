@@ -36,9 +36,9 @@ namespace noobOsu.Game.UI.Basic
         };
 
         private readonly List<IScrollSelectItem<T>> items = new List<IScrollSelectItem<T>>();
-        private Vector2 nextItemPosition = new Vector2(0);
         private readonly BasicScrollContainer<Drawable> Contents;
         private IScrollSelectItem<T> currentSelected;
+        private float nextItemY = 0f;
 
         public IReadOnlyList<IScrollSelectItem<T>> Items { get => items; private set {} }
 
@@ -52,11 +52,11 @@ namespace noobOsu.Game.UI.Basic
         public void InvalidateItems()
         {
             Contents.Clear(false);
-            nextItemPosition = new Vector2(0);
+            nextItemY = 0f;
             foreach (IScrollSelectItem<T> item in items)
             {
-                ((Drawable)item).Position = nextItemPosition;
-                nextItemPosition.Y += item.SizeY + ITEM_SPACING;
+                ((Drawable)item).Position = new Vector2(((Drawable)item).X, nextItemY);
+                nextItemY += item.SizeY + ITEM_SPACING;
 
                 Contents.Add((Drawable)item);
             }
@@ -90,8 +90,8 @@ namespace noobOsu.Game.UI.Basic
             
             if (GetItem(item.ItemName) == null)
             {
-                ((Drawable)item).Position = nextItemPosition;
-                nextItemPosition.Y += item.SizeY + ITEM_SPACING;
+                ((Drawable)item).Position = new Vector2(((Drawable)item).X, nextItemY);
+                nextItemY += item.SizeY + ITEM_SPACING;
 
                 items.Add(item);
                 Contents.Add((Drawable)item);
@@ -99,7 +99,7 @@ namespace noobOsu.Game.UI.Basic
         }
 
         // we have to add an empty drawable because if the last element gets bigger by expansion the scroll container still stays the same
-        public void FinishAdding() => Contents.Add(MakeEmptyDrawable(nextItemPosition.Y));
+        public void FinishAdding() => Contents.Add(MakeEmptyDrawable(nextItemY));
 
         public IScrollSelectItem<T> GetItem(string name)
         {

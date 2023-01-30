@@ -75,15 +75,11 @@ namespace noobOsu.Game.UI.Beatmap
             switch (newstate)
             {
                 case ScrollSelectItemState.Active:
-                    // box.Alpha = 1f;
                     header.Select();
-                    this.MoveToX(0, 200);
                     break;
                 
                 case ScrollSelectItemState.Inactive:
-                    // box.Alpha = 0.5f;
                     header.Deselect();
-                    this.MoveToX(50, 200);
                     break;
 
                 default:
@@ -104,9 +100,18 @@ namespace noobOsu.Game.UI.Beatmap
             get => false;
             set{
                 if (value)
+                {
                     box.Colour = Color4.DarkBlue;
+                    this.MoveToX(10, 200);
+                }
                 else
+                {
                     box.Colour = Color4.BlueViolet;
+                    this.MoveToX(20, 200);
+                }
+                
+                if (box.Alpha == 1.0f)
+                    this.MoveToX(0, 200);
             }
         }
 
@@ -115,8 +120,8 @@ namespace noobOsu.Game.UI.Beatmap
         public BeatmapScrollSelectItemHeader(BeatmapScrollSelectItem parent) : base()
         {
             ParentItem = parent;
-            Position = new Vector2(0);
             addedItems = false;
+            X = 20;
 
             RelativeSizeAxes = Axes.Both;
 
@@ -156,6 +161,7 @@ namespace noobOsu.Game.UI.Beatmap
                 foreach(BeatmapScrollSelectItemContent map in ItemContents)
                     ParentItem.InsertItemContent(map);
             }
+            this.MoveToX(0, 200);
 
             addedItems = true;
         }
@@ -171,6 +177,8 @@ namespace noobOsu.Game.UI.Beatmap
                     map.Deselect();
                 }
             }
+            this.MoveToX(20, 200);
+
             addedItems = false;
         }
     }
