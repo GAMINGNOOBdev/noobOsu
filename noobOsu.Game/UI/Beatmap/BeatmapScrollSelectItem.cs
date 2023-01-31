@@ -5,6 +5,7 @@ using noobOsu.Game.UI.Basic;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using System.Collections.Generic;
+using osu.Framework.Localisation;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Containers;
@@ -27,6 +28,17 @@ namespace noobOsu.Game.UI.Beatmap
             b.ReadSetInfo(beatmappath);
             SetValue(b);
             SetName(b.SetName);
+
+            filterTerms.Add( b.SetID.ToString() );
+            filterTerms.Add( b.SetName );
+            
+            foreach (IBeatmapGeneral g in b.GetBeatmaps())
+            {
+                filterTerms.Add(g.DifficultyName);
+
+                if (!filterTerms.Contains(g.MapperName))
+                    filterTerms.Add(g.MapperName);
+            }
 
             Content.Add(header = new BeatmapScrollSelectItemHeader(this));
         }
@@ -88,12 +100,28 @@ namespace noobOsu.Game.UI.Beatmap
         }
     }
 
-    public partial class BeatmapScrollSelectItemHeader : CompositeDrawable
+    public partial class BeatmapScrollSelectItemHeader : CompositeDrawable, IFilterable
     {
         private List<BeatmapScrollSelectItemContent> ItemContents = new List<BeatmapScrollSelectItemContent>();
         private SpriteText text;
         private bool addedItems;
         private Box box;
+
+        public bool MatchingFilter {
+            set
+            {
+                if (value)
+                    this.FadeIn(100);
+                else
+                    this.FadeOut(100);
+            }
+        }
+        public bool FilteringActive
+        {
+            set {}
+        }
+
+        public IEnumerable<LocalisableString> FilterTerms => ParentItem.FilterTerms;
 
         public bool Hovered
         {
@@ -189,6 +217,18 @@ namespace noobOsu.Game.UI.Beatmap
         private IBeatmapGeneral Map;
         private SpriteText text;
         private Box box;
+
+        public override bool MatchingFilter {
+            set
+            {
+                if (value)
+                    this.FadeIn(100);
+                else
+                    this.FadeOut(100);
+            }
+        }
+
+        public override IEnumerable<LocalisableString> FilterTerms => ParentItemHeader.FilterTerms;
 
         public BeatmapScrollSelectItemContent(BeatmapScrollSelectItemHeader parentHeader, IBeatmapGeneral map) : base(null, map, null)
         {

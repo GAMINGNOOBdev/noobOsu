@@ -3,27 +3,11 @@ using System;
 using osu.Framework.Graphics;
 using System.Collections.Generic;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.UserInterface;
 
 namespace noobOsu.Game.UI.Basic
 {
-    public interface IScrollSelect<T> : IComparable<IScrollSelect<T>>
-    {
-        IReadOnlyList<IScrollSelectItem<T>> Items { get; }
-
-        void InvalidateItems();
-
-        void Select(IScrollSelectItem<T> item);
-        void SelectRandom();
-        IScrollSelectItem<T> GetSelected();
-
-        void AddItem(IScrollSelectItem<T> item);
-        void FinishAdding();
-        IScrollSelectItem<T> GetItem(string name);
-        void RemoveItem(IScrollSelectItem<T> item);
-        void RemoveItem(string name);
-    }
-
-    public partial class BasicScrollSelect<T> : CompositeDrawable, IScrollSelect<T>
+    public partial class BasicSearchableScrollSelect<T> : CompositeDrawable, IScrollSelect<T>
     {
         public static int ITEM_SPACING = 10;
 
@@ -34,29 +18,42 @@ namespace noobOsu.Game.UI.Basic
         };
 
         private readonly List<IScrollSelectItem<T>> items = new List<IScrollSelectItem<T>>();
-        private readonly BasicScrollContainer<Drawable> Contents;
+        private readonly SearchContainer<Drawable> SearchContents;
         private IScrollSelectItem<T> currentSelected;
+        private readonly BasicTextBox SearchBar;
         private float nextItemY = 0f;
 
         public IReadOnlyList<IScrollSelectItem<T>> Items { get => items; private set {} }
 
-        public BasicScrollSelect() : base()
+        public BasicSearchableScrollSelect() : base()
         {
-            InternalChild = Contents = Contents = new BasicScrollContainer<Drawable>(Direction.Vertical){
-                RelativeSizeAxes = Axes.Both,
+            InternalChildren = new Drawable[] {
+                SearchBar = new BasicTextBox(){
+                    RelativeSizeAxes = Axes.X,
+                    Size = new Vector2(1, 40),
+                },
+                SearchContents = new SearchContainer<Drawable>(){
+                    Margin = new MarginPadding { Top = 40 },
+                    RelativeSizeAxes = Axes.Both,
+                }
             };
+            SearchBar.Current.BindValueChanged( (val) => {
+                SearchContents.SearchTerm = val.NewValue;
+            } );
         }
 
         public void InvalidateItems()
         {
-            Contents.Clear(false);
+            //Contents.Clear(false);
+            SearchContents.Clear(false);
             nextItemY = 0f;
             foreach (IScrollSelectItem<T> item in items)
             {
                 ((Drawable)item).Position = new Vector2(((Drawable)item).X, nextItemY);
                 nextItemY += item.SizeY + ITEM_SPACING;
 
-                Contents.Add((Drawable)item);
+                //Contents.Add((Drawable)item);
+                SearchContents.Add((Drawable)item);
             }
             FinishAdding();
         }
@@ -92,12 +89,14 @@ namespace noobOsu.Game.UI.Basic
                 nextItemY += item.SizeY + ITEM_SPACING;
 
                 items.Add(item);
-                Contents.Add((Drawable)item);
+                //Contents.Add((Drawable)item);
+                SearchContents.Add((Drawable)item);
             }
         }
 
         // we have to add an empty drawable because if the last element gets bigger by expansion the scroll container still stays the same
-        public void FinishAdding() => Contents.Add(MakeEmptyDrawable(nextItemY));
+        public void FinishAdding() => SearchContents.Add(MakeEmptyDrawable(nextItemY));
+        //public void FinishAdding() => Contents.Add(MakeEmptyDrawable(nextItemY));
 
         public IScrollSelectItem<T> GetItem(string name)
         {
@@ -120,7 +119,8 @@ namespace noobOsu.Game.UI.Basic
             {
                 item.Removed();
                 items.Remove(item);
-                Contents.Remove((Drawable)item, false);
+                //Contents.Remove((Drawable)item, false);
+                SearchContents.Remove((Drawable)item, false);
             }
         }
 
@@ -131,7 +131,8 @@ namespace noobOsu.Game.UI.Basic
             {
                 item.Removed();
                 items.Remove(item);
-                Contents.Remove((Drawable)item, false);
+                //Contents.Remove((Drawable)item, false);
+                SearchContents.Remove((Drawable)item, false);
             }
         }
 

@@ -33,6 +33,7 @@ namespace noobOsu.Game.HitObjects
             ParentMap = parentmap;
 
             string[] object_values = expression.Split(',');
+            RawPosition = new Vector2(int.Parse(object_values[0]), int.Parse(object_values[1]));
             position.X = int.Parse(object_values[0]) / 640f + 0.1f;
             position.Y = int.Parse(object_values[1]) / 512f + 0.125f;
             Time = int.Parse(object_values[2]);
@@ -75,11 +76,11 @@ namespace noobOsu.Game.HitObjects
 
             if (Timing != null)
                 if (Timing.BeatLength < 0)
-                    EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * Path.GetLength() / (ParentMap.GetInfo().Difficulty.SliderMultiplier * (-100/Timing.BeatLength)) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
+                    EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * sliderInfo.Length / (ParentMap.GetInfo().Difficulty.SliderMultiplier * 100 * (-100/Timing.BeatLength)) * ParentMap.GetInfo().Timing.BPM_At(Time));
                 else
-                    EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * Path.GetLength() / (ParentMap.GetInfo().Difficulty.SliderMultiplier) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
+                    EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * sliderInfo.Length / (ParentMap.GetInfo().Difficulty.SliderMultiplier * 100) * ParentMap.GetInfo().Timing.BPM_At(Time));
             else
-                EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * Path.GetLength() / (ParentMap.GetInfo().Difficulty.SliderMultiplier) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
+                EndTime = Time + (int)((sliderInfo.SlideRepeat+1) * sliderInfo.Length / (ParentMap.GetInfo().Difficulty.SliderMultiplier * 100) * ParentMap.GetInfo().Timing.BPM_At(Time));
             
             CalculateRepeatTimes(timing);
         }
@@ -92,7 +93,6 @@ namespace noobOsu.Game.HitObjects
             string[] curveInfo = object_values[5].Split('|');
             sliderInfo.CurveType = SliderInfo.StringToType(curveInfo[0]);
 
-            RawPosition = new Vector2(int.Parse(object_values[0]), int.Parse(object_values[1]));
             Path.SetStartPosition(RawPosition);
             Path.AddAnchorPoint(RawPosition);
             for (int i = 1; i < curveInfo.Length; i++) {
@@ -101,9 +101,9 @@ namespace noobOsu.Game.HitObjects
             Path.FinishPath();
 
             if (sliderInfo.SlideRepeat > 0)
-                sliderInfo.TotalSliderSpan = (float)Path.GetLength() * sliderInfo.SlideRepeat;
+                sliderInfo.TotalSliderSpan = (float)sliderInfo.Length * sliderInfo.SlideRepeat;
             else
-                sliderInfo.TotalSliderSpan = (float)Path.GetLength();
+                sliderInfo.TotalSliderSpan = (float)sliderInfo.Length;
         }
 
         private void CalculateRepeatTimes(ITimingPoint timing)
@@ -113,11 +113,11 @@ namespace noobOsu.Game.HitObjects
             {
                 if (Timing != null)
                     if (Timing.BeatLength < 0)
-                        repeatTime = (int)((repeat) * Path.GetLength() / (ParentMap.GetInfo().Difficulty.SliderMultiplier * (-100/Timing.BeatLength)) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
+                        repeatTime = (int)((repeat) * sliderInfo.Length / (ParentMap.GetInfo().Difficulty.SliderMultiplier * (-100/Timing.BeatLength)) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
                     else
-                        repeatTime = (int)((repeat) * Path.GetLength() / (ParentMap.GetInfo().Difficulty.SliderMultiplier) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
+                        repeatTime = (int)((repeat) * sliderInfo.Length / (ParentMap.GetInfo().Difficulty.SliderMultiplier) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
                 else
-                    repeatTime = (int)((repeat) * Path.GetLength() / (ParentMap.GetInfo().Difficulty.SliderMultiplier) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
+                    repeatTime = (int)((repeat) * sliderInfo.Length / (ParentMap.GetInfo().Difficulty.SliderMultiplier) * (ParentMap.GetInfo().Timing.BPM_At(Time)/100));
                 
                 sliderInfo.RepeatTimingInfo.AddTimingPoint(repeatTime);
             }

@@ -100,6 +100,7 @@ namespace noobOsu.Game.Screens
                 Y = 1f,
                 Text = "Back",
                 Size = new Vector2(20 * "Back".Length, 20),
+                Scale = new Vector2(2f),
                 Action = () => {
                     this.Exit();
                 },

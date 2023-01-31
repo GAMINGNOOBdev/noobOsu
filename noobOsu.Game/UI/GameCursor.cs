@@ -7,12 +7,13 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Containers;
+using osuTK.Input;
 
 namespace noobOsu.Game.UI
 {
-    public partial class GameCursor : Container, ICursor
+    public partial class GameCursor : CursorAdapter
     {
-        private Sprite cursorContainer;
+        private Sprite cursorContainer, cursorOverlayContainer;
 
         public GameCursor()
         {
@@ -22,9 +23,28 @@ namespace noobOsu.Game.UI
         [BackgroundDependencyLoader]
         protected void load(TextureStore textures)
         {
-            InternalChild = cursorContainer = new Sprite(){
-                Texture = textures.Get(@"cursor"),
+            InternalChildren = new Drawable[]
+            {
+                cursorContainer = new Sprite(){
+                    Texture = textures.Get(@"cursor"),
+                },
+                cursorOverlayContainer = new Sprite(){
+                    Texture = textures.Get(@"cursor_overlay"),
+                    Alpha = 0f,
+                },
             };
+        }
+
+        public override void ButtonPress(MouseButton button)
+        {
+            base.ButtonPress(button);
+            cursorOverlayContainer.FadeInFromZero(100);
+        }
+
+        public override void ButtonRelease(MouseButton button)
+        {
+            base.ButtonRelease(button);
+            cursorOverlayContainer.FadeOutFromOne(100);
         }
     }
 
@@ -59,13 +79,21 @@ namespace noobOsu.Game.UI
                 cursor?.Hide();
         }
 
+        protected override bool OnMouseMove(MouseMoveEvent e)
+        {
+            cursor?.Moved(e);
+            return base.OnMouseMove(e);
+        }
+
         protected override bool OnMouseDown(MouseDownEvent e)
         {
+            cursor?.ButtonPress(e.Button);
             return base.OnMouseDown(e);
         }
         
         protected override void OnMouseUp(MouseUpEvent e)
         {
+            cursor?.ButtonRelease(e.Button);
             base.OnMouseUp(e);
         }
 

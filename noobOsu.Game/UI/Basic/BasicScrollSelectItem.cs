@@ -3,6 +3,8 @@ using osuTK.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using System.Collections.Generic;
+using osu.Framework.Localisation;
 
 namespace noobOsu.Game.UI.Basic
 {
@@ -13,7 +15,7 @@ namespace noobOsu.Game.UI.Basic
         Inactive,
     }
 
-    public interface IScrollSelectItem<T> : IDrawable
+    public interface IScrollSelectItem<T> : IDrawable, IFilterable
     {
         // value of this item
         T Value { get; }
@@ -37,7 +39,48 @@ namespace noobOsu.Game.UI.Basic
 
     public partial class BasicScrollSelectItem<T> : CompositeDrawable, IScrollSelectItem<T>
     {
+        protected readonly List<LocalisableString> filterTerms = new List<LocalisableString>();
+        
         public IScrollSelect<T> ParentSelect { get; private set; }
+        public string ItemName { get; private set; }
+        public float SizeY { get; set; }
+        
+        public T Value {
+            get => itemValue;
+            private set
+            {
+                itemValue = value;
+            }
+        }
+
+        public ScrollSelectItemState State {
+            get => state;
+            private set{
+                if (state == value)
+                    return;
+                
+                state = value;
+                ItemStateChanged(state);
+            }
+        }
+
+        public virtual bool MatchingFilter
+        {
+            set
+            {
+                if (value)
+                    this.FadeIn(100);
+                else
+                    this.FadeOut(100);
+            }
+        }
+        public virtual bool FilteringActive
+        {
+            set {}
+        }
+
+        public virtual IEnumerable<LocalisableString> FilterTerms => filterTerms;
+
         private ScrollSelectItemState state = ScrollSelectItemState.Inactive;
         private T itemValue;
 
@@ -49,25 +92,6 @@ namespace noobOsu.Game.UI.Basic
             Origin = Anchor.Centre,
         };
 
-        public float SizeY { get; set; }
-        public T Value {
-            get => itemValue;
-            private set
-            {
-                itemValue = value;
-            }
-        }
-        public string ItemName { get; private set; }
-        public ScrollSelectItemState State {
-            get => state;
-            private set{
-                if (state == value)
-                    return;
-                
-                state = value;
-                ItemStateChanged(state);
-            }
-        }
 
         public BasicScrollSelectItem(string name, T value, IScrollSelect<T> parent)
         {
