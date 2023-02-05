@@ -1,4 +1,4 @@
-namespace noobOsu.Game.Skins
+namespace noobOsu.Game.Skins.Properties
 {
     public interface ISkinnableProperty
     {

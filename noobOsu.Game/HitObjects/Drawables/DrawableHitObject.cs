@@ -5,8 +5,8 @@ using System.Diagnostics;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Graphics;
 using System.Collections.Generic;
-using noobOsu.Game.Skins.Drawables;
 using noobOsu.Game.Beatmaps.Timing;
+using noobOsu.Game.Skins.Properties;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Containers;
 using Logger = osu.Framework.Logging.Logger;
@@ -57,8 +57,9 @@ namespace noobOsu.Game.HitObjects.Drawables
 
             this.Depth = HitObject.Time;
 
-            RelativePositionAxes = Axes.Both;
+            RelativePositionAxes = Axes.None;
             Position = hitObj.Position;
+            Radius = 64f * ((1.0f - 0.7f * (beatmap.GetInfo().Difficulty.CS - 5f) / 5f) / 2f);
         }
 
         public void AddNumbers(SpriteText objects) 

@@ -3,7 +3,7 @@ using noobOsu.Game.Skins;
 using osu.Framework.Logging;
 using osu.Framework.Bindables;
 
-namespace noobOsu.Game.HitObjects.Drawables
+namespace noobOsu.Game.Skins.Properties
 {
     public class SkinnableColorProperty : SkinnableProperty
     {

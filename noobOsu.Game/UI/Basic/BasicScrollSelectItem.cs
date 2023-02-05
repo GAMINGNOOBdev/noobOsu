@@ -37,10 +37,8 @@ namespace noobOsu.Game.UI.Basic
         void Removed();
     }
 
-    public partial class BasicScrollSelectItem<T> : CompositeDrawable, IScrollSelectItem<T>
+    public partial class BasicScrollSelectItem<T> : FilterableDrawable, IScrollSelectItem<T>
     {
-        protected readonly List<LocalisableString> filterTerms = new List<LocalisableString>();
-        
         public IScrollSelect<T> ParentSelect { get; private set; }
         public string ItemName { get; private set; }
         public float SizeY { get; set; }
@@ -64,7 +62,7 @@ namespace noobOsu.Game.UI.Basic
             }
         }
 
-        public virtual bool MatchingFilter
+        public override bool MatchingFilter
         {
             set
             {
@@ -74,17 +72,11 @@ namespace noobOsu.Game.UI.Basic
                     this.FadeOut(100);
             }
         }
-        public virtual bool FilteringActive
-        {
-            set {}
-        }
-
-        public virtual IEnumerable<LocalisableString> FilterTerms => filterTerms;
 
         private ScrollSelectItemState state = ScrollSelectItemState.Inactive;
         private T itemValue;
 
-        protected readonly DrawSizePreservingFillContainer Content = new DrawSizePreservingFillContainer(){
+        protected readonly FilterableDrawSizePreservingFillContainer Content = new FilterableDrawSizePreservingFillContainer(){
             TargetDrawSize = new Vector2(350, 50),
             BorderColour = new Color4(1f, 1f, 1f, 1f),
             CornerRadius = 5,

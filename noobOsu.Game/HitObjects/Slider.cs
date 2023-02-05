@@ -5,9 +5,8 @@ using noobOsu.Game.Skins;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Logging;
 using osu.Framework.Graphics;
-using osu.Framework.Bindables;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics.Sprites;
+using noobOsu.Game.Skins.Properties;
 using osu.Framework.Graphics.Textures;
 using noobOsu.Game.HitObjects.Drawables;
 
@@ -20,19 +19,13 @@ namespace noobOsu.Game.HitObjects
         private SliderBall Ball;
         private ColoredPath path;
         private bool startApproach, approachEnded, started, circleEnded;
-        private double totalVisibleTime, fadeTime, currentTime;
-        private double waitingTime, currentDelayTime, hitWindow;
+        private double waitingTime, currentDelayTime, currentTime;
         private bool ending = false;
         public double Duration { get; private set; }
 
-        public Slider(HitObject hitObj, IBeatmap beatmap, IBeatmapDifficulty difficulty, IColorStore colors) : base(hitObj, colors, beatmap)
+        public Slider(HitObject hitObj, IBeatmap beatmap, IColorStore colors) : base(hitObj, colors, beatmap)
         {
-            Radius = 64f * ((1.0f - 0.7f * (difficulty.CS - 5f) / 5f) / 2f);
-
-            totalVisibleTime = BeatmapDifficulty.ScaleWithRange(difficulty.AR, 1800f, 1200f, 450f);
-            fadeTime = BeatmapDifficulty.ScaleWithRange(difficulty.AR, 1200f, 800f, 300f);
-            hitWindow = BeatmapDifficulty.ScaleWithRange(difficulty.OD, 80, 50, 20);
-            waitingTime = HitObject.Time - hitWindow;
+            waitingTime = HitObject.Time - HitObject.ObjectTiming.HitWindow;
 
             // add the time it takes to complete the slider to the total visible time
             Duration = HitObject.EndTime - HitObject.Time;
@@ -58,7 +51,7 @@ namespace noobOsu.Game.HitObjects
             AddProperty(new SkinnableColorProperty(path.AccentColor, Color, "SliderTrack"));
             AddProperty(new SkinnableColorProperty(path.BorderColor, Color4.White, "SliderBorder"));
 
-            sliderStart = new SliderStartCircle(this, HitObject.Position);
+            sliderStart = new SliderStartCircle(this);
             if (HitObject.SliderInformation.SlideRepeat > 0)
                 sliderEnd = new SliderEndCircle(this, HitObject.Path.GetLastPoint());
             Ball = new SliderBall(this);
@@ -104,10 +97,10 @@ namespace noobOsu.Game.HitObjects
             started = true;
             startApproach = true;
             
-            path.FadeInFromZero(fadeTime);
+            path.FadeInFromZero(HitObject.ObjectTiming.FadeTime);
 
             sliderStart.Start();
-            CircleNumbers.FadeInFromZero(fadeTime);
+            CircleNumbers.FadeInFromZero(HitObject.ObjectTiming.FadeTime);
 
             if (sliderEnd != null)
                 sliderEnd.Start();
@@ -148,7 +141,7 @@ namespace noobOsu.Game.HitObjects
             {
                 currentTime += Clock.ElapsedFrameTime;
 
-                if (currentTime >= totalVisibleTime)
+                if (currentTime >= HitObject.ObjectTiming.TotalVisibleTime)
                 {
                     startApproach = false;
                     approachEnded = true;

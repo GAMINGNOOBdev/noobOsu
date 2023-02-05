@@ -7,9 +7,9 @@ using osu.Framework.Logging;
 using osu.Framework.Graphics;
 using osu.Framework.Bindables;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics.Sprites;
+using noobOsu.Game.Skins.Drawables;
+using noobOsu.Game.Skins.Properties;
 using osu.Framework.Graphics.Textures;
-using noobOsu.Game.HitObjects.Drawables;
 using osu.Framework.Graphics.Containers;
 
 namespace noobOsu.Game.HitObjects
@@ -17,7 +17,7 @@ namespace noobOsu.Game.HitObjects
     public partial class SliderBall : CompositeDrawable
     {
         private readonly Slider ParentSlider;
-        private HitObjectSprite Ball, FollowCircle;
+        private SkinnableSprite Ball, FollowCircle;
         private Bindable<Color4> BallColor = new Bindable<Color4>();
         private Bindable<bool> RotateFollowBall = new Bindable<bool>(false);
         private double CurrentProgress;
@@ -38,7 +38,7 @@ namespace noobOsu.Game.HitObjects
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            Ball = new HitObjectSprite(){
+            Ball = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -51,7 +51,7 @@ namespace noobOsu.Game.HitObjects
             ParentSlider.AddProperty(new SkinnableColorProperty(BallColor, ParentSlider.Color, "SliderBall"));
             ParentSlider.AddProperty(new SkinnableTextureProperty(Ball, "sliderb"));
 
-            FollowCircle = new HitObjectSprite(){
+            FollowCircle = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

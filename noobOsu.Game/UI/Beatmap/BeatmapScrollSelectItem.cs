@@ -62,7 +62,7 @@ namespace noobOsu.Game.UI.Beatmap
 
         public void InsertItemContent(BeatmapScrollSelectItemContent content)
         {
-            AddInternal(content);
+            Content.Add(content);
             SizeY += BasicScrollSelect<object>.ITEM_SPACING + content.SizeY;
             ParentSelect.InvalidateItems();
         }
@@ -77,7 +77,7 @@ namespace noobOsu.Game.UI.Beatmap
 
         public void RemoveItemContent(BeatmapScrollSelectItemContent content)
         {
-            RemoveInternal(content, false);
+            Content.Remove(content, false);
             SizeY -= BasicScrollSelect<object>.ITEM_SPACING + content.SizeY;
             ParentSelect.InvalidateItems();
         }
@@ -214,7 +214,6 @@ namespace noobOsu.Game.UI.Beatmap
     public partial class BeatmapScrollSelectItemContent : BasicScrollSelectItem<IBeatmapGeneral>
     {
         private BeatmapScrollSelectItemHeader ParentItemHeader;
-        private IBeatmapGeneral Map;
         private SpriteText text;
         private Box box;
 
@@ -222,17 +221,20 @@ namespace noobOsu.Game.UI.Beatmap
             set
             {
                 if (value)
-                    this.FadeIn(100);
+                {
+                    Show();
+                    osu.Framework.Logging.Logger.Log("matching filter!");
+                }
                 else
-                    this.FadeOut(100);
+                {
+                    Hide();
+                    osu.Framework.Logging.Logger.Log("NOT matching filter!");
+                }
             }
         }
 
-        public override IEnumerable<LocalisableString> FilterTerms => ParentItemHeader.FilterTerms;
-
         public BeatmapScrollSelectItemContent(BeatmapScrollSelectItemHeader parentHeader, IBeatmapGeneral map) : base(null, map, null)
         {
-            Map = map;
             Position = new Vector2(70, 0);
             ParentItemHeader = parentHeader;
             SizeY = ParentItemHeader.ParentItem.SizeY;
@@ -252,8 +254,10 @@ namespace noobOsu.Game.UI.Beatmap
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Font = FontUsage.Default.With(size: 20),
-                Text = Map.SongName + " [" + Map.DifficultyName + "]",
+                Text = Value.SongName + " [" + Value.DifficultyName + "]",
             };
+
+            filterTerms.Add(Value.DifficultyName);
 
             AddInternal(box);
             AddInternal(text);

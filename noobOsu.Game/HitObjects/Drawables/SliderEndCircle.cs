@@ -3,16 +3,17 @@ using noobOsu.Game.Beatmaps;
 using osu.Framework.Logging;
 using osu.Framework.Graphics;
 using osu.Framework.Allocation;
+using noobOsu.Game.Skins.Drawables;
+using noobOsu.Game.Skins.Properties;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using noobOsu.Game.HitObjects.Drawables;
 using osu.Framework.Graphics.Containers;
 
 namespace noobOsu.Game.HitObjects
 {
     public partial class SliderEndCircle : CompositeDrawable
     {   
-        private HitObjectSprite sliderEndCircle, reverseArrow;
+        private SkinnableSprite sliderEndCircle, reverseArrow;
         private double totalVisibleTime, fadeTime, CurrentTime = 0;
         private double waitingTime, hitWindow;
         private int RepeatMax, LastRepeatTime = 0;
@@ -37,7 +38,7 @@ namespace noobOsu.Game.HitObjects
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            sliderEndCircle = new HitObjectSprite(){
+            sliderEndCircle = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -46,7 +47,7 @@ namespace noobOsu.Game.HitObjects
             sliderEndCircle.Scale = new Vector2((float)ParentSlider.Radius*2);
             ParentSlider.AddProperty(new SkinnableTextureProperty(sliderEndCircle, "sliderendcircle"));
 
-            reverseArrow = new HitObjectSprite(){
+            reverseArrow = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

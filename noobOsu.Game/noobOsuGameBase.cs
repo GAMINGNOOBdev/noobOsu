@@ -2,11 +2,12 @@ using osuTK;
 using noobOsu.Game.UI;
 using noobOsu.Resources;
 using noobOsu.Game.Stores;
+using osu.Framework.Timing;
 using noobOsu.Game.Settings;
 using osu.Framework.Graphics;
 using osu.Framework.IO.Stores;
 using osu.Framework.Allocation;
-using osu.Framework.Input;
+using noobOsu.Game.Skins.Drawables;
 using osu.Framework.Graphics.Containers;
 
 namespace noobOsu.Game
@@ -21,6 +22,7 @@ namespace noobOsu.Game
         private GameSettings Settings;
 
         public static GameCursorContainer GlobalGameCursor;
+        public static SkinCursorContainer GlobalSkinCursor;
 
         protected noobOsuGameBase()
         {
@@ -53,6 +55,11 @@ namespace noobOsu.Game
 
             base.Content.Add(
                 GlobalGameCursor = new GameCursorContainer(){
+                    RelativeSizeAxes = Axes.Both,
+                }
+            );
+            base.Content.Add(
+                GlobalSkinCursor = new SkinCursorContainer(){
                     RelativeSizeAxes = Axes.Both,
                 }
             );

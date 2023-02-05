@@ -25,8 +25,16 @@ namespace noobOsu.Game.Beatmaps
                 if (e.Type == BeatmapEventType.Background || e.Type == BeatmapEventType.Video)
                 {
                     e.Filename = object_values[2];
-                    e.xOffset = int.Parse(object_values[3]);
-                    e.yOffset = int.Parse(object_values[4]);
+                    if (object_values.Length > 3)
+                    {
+                        e.xOffset = int.Parse(object_values[3]);
+                        e.yOffset = int.Parse(object_values[4]);
+                    }
+                    else
+                    {
+                        e.xOffset = 0;
+                        e.yOffset = 0;
+                    }
                 }
                 else
                 {

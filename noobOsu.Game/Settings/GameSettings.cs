@@ -23,7 +23,7 @@ namespace noobOsu.Game.Settings
         public BindableBool UseBeatmapSkins = new BindableBool(true);
         public BindableBool UseBeatmapHitsounds = new BindableBool(true);
         public BindableBool UseBeatmapColors = new BindableBool(true);
-        public BindableInt BeatmapBackgroundDim = new BindableInt(0){ MinValue = 0, MaxValue = 100 };
+        public BindableInt BeatmapBackgroundDim = new BindableInt(0){ MinValue = 0, MaxValue = 100, Default = 90 };
         
         public GameSettings()
         {

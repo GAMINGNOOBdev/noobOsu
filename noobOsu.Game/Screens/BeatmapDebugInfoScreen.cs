@@ -38,6 +38,11 @@ namespace noobOsu.Game.Screens
             AddInternal(child);
         }
 
+        public void RemoveChild(Drawable child)
+        {
+            RemoveInternal(child, false);
+        }
+
         public void SetMap(IBeatmapGeneral map)
         {
             beatmapInfo = map;

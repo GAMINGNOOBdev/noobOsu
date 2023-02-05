@@ -1,7 +1,10 @@
 using System.IO;
 using noobOsu.Game.Stores;
+using noobOsu.Game.UI.Cursor;
 using osu.Framework.Graphics;
 using System.Collections.Generic;
+using noobOsu.Game.Skins.Drawables;
+using noobOsu.Game.Skins.Properties;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using noobOsu.Game.HitObjects.Drawables;
@@ -10,16 +13,35 @@ namespace noobOsu.Game.Skins
 {
     public class Skin : ISkin
     {
+        private SkinCursor cursor;
+
         public string DirectoryName { get; set; }
         public ISkinGeneral General { get; private set; }
         public ISkinColors Colors { get; private set; }
         public ISkinFont Font { get; private set; }
+        public ICursor Cursor
+        {
+            get => cursor;
+            set
+            {
+                throw new System.NotSupportedException("cursor is changed automatically so no need for a manual set");
+            }
+        }
+        public ISkinnable SkinnableCursor
+        {
+            get => cursor;
+            set
+            {
+                throw new System.NotSupportedException("cursor is changed automatically so no need for a manual set");
+            }
+        }
 
         public Skin()
         {
             General = new SkinGeneral(this);
             Colors = new SkinColors(this);
             Font = new SkinFont(this);
+            cursor = new SkinCursor();
         }
 
         public SpriteText GetHitobjectNumber(int num, DrawableHitObject hitObject, TextureStore textureStore) {
@@ -131,6 +153,8 @@ namespace noobOsu.Game.Skins
                 }
             }
             file.Close();
+
+            cursor.ResetResolvedProperties();
         }
 
         private FontUsage GetHitcircleFont(double size)

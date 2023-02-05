@@ -1,7 +1,10 @@
 using osuTK;
 using osuTK.Input;
+using noobOsu.Game.Skins;
 using osu.Framework.Input.Events;
 using osu.Framework.Graphics.Containers;
+using noobOsu.Game.Skins.Properties;
+using System.Collections.Generic;
 
 namespace noobOsu.Game.UI.Cursor
 {
@@ -9,6 +12,7 @@ namespace noobOsu.Game.UI.Cursor
     {
         protected bool[] MouseButtons = new bool[((int)MouseButton.LastButton)+1];
         private const MouseButton DRAG_BUTTON = MouseButton.Left;
+        private readonly Skinnable _skinnable = new Skinnable();
         private Vector2 DragStartPos, LastMousePos;
         private CursorState cursorState;
 
@@ -32,6 +36,11 @@ namespace noobOsu.Game.UI.Cursor
         public CursorAdapter()
         {
             State = CursorState.Normal;
+        }
+
+        public void SetState(CursorState state)
+        {
+            State = state;
         }
 
         public virtual void ButtonPress(MouseButton button)
@@ -72,6 +81,11 @@ namespace noobOsu.Game.UI.Cursor
             //Rotation = 0f;
         }
 
+        public virtual void UpdateCursor()
+        {
+
+        }
+
         public MouseButton AnyButtonPressed()
         {
             for (int i = 0; i < MouseButtons.Length; i++)
@@ -81,5 +95,11 @@ namespace noobOsu.Game.UI.Cursor
             }
             return (MouseButton)(-1);
         }
+
+        public void AddProperty(ISkinnableProperty property) => _skinnable.AddProperty(property);
+
+        public List<ISkinnableProperty> GetProperties() => _skinnable.GetProperties();
+
+        public void ResetResolvedProperties() => _skinnable.ResetResolvedProperties();
     }
 }

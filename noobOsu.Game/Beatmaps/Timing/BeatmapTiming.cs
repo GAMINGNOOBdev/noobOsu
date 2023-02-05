@@ -61,6 +61,11 @@ namespace noobOsu.Game.Beatmaps.Timing
             return lastBPM;
         }
 
+        public double GetTimingOffset()
+        {
+            return timingPoints[0].TimeStamp;
+        }
+
         public IReadOnlyList<ITimingPoint> GetTimingPoints() => timingPoints;
 
         private ITimingPoint FindClosestTimingPoint(int timestamp, bool uninherited)

@@ -8,10 +8,11 @@ namespace noobOsu.Game.HitObjects
     public class HitObject
     {
         private readonly Vector2 position = new Vector2(0);
+        private readonly Vector2 rawPosition = new Vector2(0);
 
         public Vector2 Position => position;
         public IBeatmap ParentMap { get; private set; }
-        public Vector2 RawPosition { get; private set; }
+        public IHitObjectTiming ObjectTiming { get; private set; }
 
         public int Time { get; private set; } = 0;
         public int EndTime { get; private set; } = 0;
@@ -31,16 +32,19 @@ namespace noobOsu.Game.HitObjects
         public HitObject(string expression, IBeatmap parentmap)
         {
             ParentMap = parentmap;
+            ObjectTiming = new HitObjectTiming(parentmap.GetInfo().Difficulty);
 
             string[] object_values = expression.Split(',');
-            RawPosition = new Vector2(int.Parse(object_values[0]), int.Parse(object_values[1]));
-            position.X = int.Parse(object_values[0]) / 640f + 0.1f;
-            position.Y = int.Parse(object_values[1]) / 512f + 0.125f;
+            rawPosition.X = int.Parse(object_values[0]);
+            rawPosition.Y = int.Parse(object_values[1]);
+            position.X = rawPosition.X + 64;
+            position.Y = rawPosition.Y + 64;
             Time = int.Parse(object_values[2]);
             Type = int.Parse(object_values[3]);
             HitSound = int.Parse(object_values[4]);
 
             ComboColorSkip = (Type >> 4) & 0b111;
+            EndTime = Time + (int)ObjectTiming.TotalVisibleTime + (int)ObjectTiming.HitWindow + 200;
 
             // read additional info if this is a slider
             if (this.isSlider())
@@ -93,8 +97,8 @@ namespace noobOsu.Game.HitObjects
             string[] curveInfo = object_values[5].Split('|');
             sliderInfo.CurveType = SliderInfo.StringToType(curveInfo[0]);
 
-            Path.SetStartPosition(RawPosition);
-            Path.AddAnchorPoint(RawPosition);
+            Path.SetStartPosition(rawPosition);
+            Path.AddAnchorPoint(rawPosition);
             for (int i = 1; i < curveInfo.Length; i++) {
                 Path.AddAnchorPoint(curveInfo[i]);
             }
@@ -125,7 +129,7 @@ namespace noobOsu.Game.HitObjects
 
         public override string ToString()
         {
-            string infoString = GetTypeString(this) + "(x: " + RawPosition.X + " y: " + RawPosition.Y  + " bpm: " + 1 / ParentMap.GetInfo().Timing.BPM_At(Time) * 1000 * 60 + " starttime: " + Time;
+            string infoString = GetTypeString(this) + "(x: " + rawPosition.X + " y: " + rawPosition.Y  + " bpm: " + 1 / ParentMap.GetInfo().Timing.BPM_At(Time) * 1000 * 60 + " starttime: " + Time;
             if (isSlider())
             {
                 infoString += " endtime: " + EndTime + " repeat: " + SliderInformation.SlideRepeat;

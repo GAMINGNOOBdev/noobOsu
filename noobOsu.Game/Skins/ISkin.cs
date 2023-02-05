@@ -1,5 +1,6 @@
 using osuTK;
 using System.IO;
+using noobOsu.Game.UI.Cursor;
 using osu.Framework.Graphics;
 using System.Collections.Generic;
 using noobOsu.Game.Skins.Drawables;
@@ -15,6 +16,8 @@ namespace noobOsu.Game.Skins
         ISkinGeneral General { get; }
         ISkinColors Colors { get; }
         ISkinFont Font { get; }
+        ICursor Cursor { get; }
+        ISkinnable SkinnableCursor { get; }
 
         void LoadSkin(string path);
 

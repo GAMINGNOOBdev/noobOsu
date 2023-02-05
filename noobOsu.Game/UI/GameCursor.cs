@@ -1,12 +1,14 @@
+using noobOsu.Game.Skins;
 using osu.Framework.Graphics;
 using noobOsu.Game.UI.Cursor;
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
-using osu.Framework.Graphics.Shapes;
+using noobOsu.Game.Skins.Properties;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Containers;
+using Logger = osu.Framework.Logging.Logger;
 using osuTK.Input;
 
 namespace noobOsu.Game.UI
@@ -69,16 +71,6 @@ namespace noobOsu.Game.UI
             State.Value = Visibility.Hidden;
         }
 
-        protected override void Update()
-        {
-            base.Update();
-
-            if (State.Value != Visibility.Hidden)
-                cursor?.Show();
-            else
-                cursor?.Hide();
-        }
-
         protected override bool OnMouseMove(MouseMoveEvent e)
         {
             cursor?.Moved(e);
@@ -97,8 +89,17 @@ namespace noobOsu.Game.UI
             base.OnMouseUp(e);
         }
 
+        protected override void Update()
+        {
+            base.Update();
+
+            cursor?.UpdateCursor();
+        }
+
         protected override Drawable CreateCursor() {
-            cursor = new GameCursor();
+            if (cursor == null)
+                cursor = new GameCursor();
+
             return (Drawable)cursor;
         }
     }

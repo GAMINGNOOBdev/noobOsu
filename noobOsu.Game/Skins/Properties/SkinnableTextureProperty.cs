@@ -1,17 +1,18 @@
 using osuTK;
 using noobOsu.Game.Util;
-using noobOsu.Game.Skins;
+using noobOsu.Game.Skins.Drawables;
 using osu.Framework.Graphics.Textures;
 using Logger = osu.Framework.Logging.Logger;
 
-namespace noobOsu.Game.HitObjects.Drawables
+namespace noobOsu.Game.Skins.Properties
 {
     public class SkinnableTextureProperty : SkinnableProperty
     {
-        private HitObjectSprite Drawable;
-        private bool AutoCrop;
+        private SkinnableSprite Drawable;
+        public bool AutoCrop = false;
+        public bool Scaleable = true;
 
-        public SkinnableTextureProperty(HitObjectSprite drawable, string name, bool CropIfNeeded = false)
+        public SkinnableTextureProperty(SkinnableSprite drawable, string name, bool CropIfNeeded = false)
         {
             PropertyType = ISkinnableProperty.Type.Texture;
             AutoCrop = CropIfNeeded;
@@ -38,7 +39,8 @@ namespace noobOsu.Game.HitObjects.Drawables
                 if (AutoCrop)
                     Drawable.Texture = TextureUtil.CropHitCircleIfNeeded(Drawable.Texture, Scale);
             
-                Drawable.Scale *= new Vector2(TextureUtil.GetScaleFor(Drawable.Texture)) * (1/Scale);
+                if (Scaleable)
+                    Drawable.Scale *= new Vector2(TextureUtil.GetScaleFor(Drawable.Texture)) * (1/Scale);
                 Drawable.ScaleFactor = TextureUtil.GetScaleFor(Drawable.Texture) * (1/Scale);
             }
             else
@@ -46,7 +48,8 @@ namespace noobOsu.Game.HitObjects.Drawables
                 if (AutoCrop)
                     Drawable.Texture = TextureUtil.CropHitCircleIfNeeded(Drawable.Texture);
             
-                Drawable.Scale *= new Vector2(TextureUtil.GetScaleFor(Drawable.Texture));
+                if (Scaleable)
+                    Drawable.Scale *= new Vector2(TextureUtil.GetScaleFor(Drawable.Texture));
                 Drawable.ScaleFactor = TextureUtil.GetScaleFor(Drawable.Texture);
             }
         }

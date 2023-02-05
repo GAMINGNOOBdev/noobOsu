@@ -44,7 +44,6 @@ namespace noobOsu.Game.UI.Basic
 
         public void InvalidateItems()
         {
-            //Contents.Clear(false);
             SearchContents.Clear(false);
             nextItemY = 0f;
             foreach (IScrollSelectItem<T> item in items)
@@ -52,7 +51,6 @@ namespace noobOsu.Game.UI.Basic
                 ((Drawable)item).Position = new Vector2(((Drawable)item).X, nextItemY);
                 nextItemY += item.SizeY + ITEM_SPACING;
 
-                //Contents.Add((Drawable)item);
                 SearchContents.Add((Drawable)item);
             }
             FinishAdding();
@@ -89,7 +87,6 @@ namespace noobOsu.Game.UI.Basic
                 nextItemY += item.SizeY + ITEM_SPACING;
 
                 items.Add(item);
-                //Contents.Add((Drawable)item);
                 SearchContents.Add((Drawable)item);
             }
         }
@@ -119,7 +116,6 @@ namespace noobOsu.Game.UI.Basic
             {
                 item.Removed();
                 items.Remove(item);
-                //Contents.Remove((Drawable)item, false);
                 SearchContents.Remove((Drawable)item, false);
             }
         }
@@ -131,7 +127,6 @@ namespace noobOsu.Game.UI.Basic
             {
                 item.Removed();
                 items.Remove(item);
-                //Contents.Remove((Drawable)item, false);
                 SearchContents.Remove((Drawable)item, false);
             }
         }

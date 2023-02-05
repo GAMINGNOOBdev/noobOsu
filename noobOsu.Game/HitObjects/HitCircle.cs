@@ -3,27 +3,23 @@ using noobOsu.Game.Skins;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Graphics;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics.Sprites;
+using noobOsu.Game.Skins.Drawables;
+using noobOsu.Game.Skins.Properties;
 using noobOsu.Game.HitObjects.Drawables;
+using osu.Framework.Input.Events;
 
 namespace noobOsu.Game.HitObjects
 {
     public partial class HitCircle : DrawableHitObject
     {
-        private HitObjectSprite approachCircle, hitcircleArea, hitcircleOverlay;
+        private SkinnableSprite approachCircle, hitcircleArea, hitcircleOverlay;
         private bool startApproach, approachEnded, started, circleEnded;
-        private double totalVisibleTime, fadeTime, currentTime;
-        private double waitingTime, currentDelayTime, hitWindow;
+        private double waitingTime, currentDelayTime, currentTime;
         private bool ending = false;
 
-        public HitCircle(HitObject hitObj, IBeatmap beatmap, IBeatmapDifficulty difficulty, IColorStore colors) : base(hitObj, colors, beatmap)
+        public HitCircle(HitObject hitObj, IBeatmap beatmap, IColorStore colors) : base(hitObj, colors, beatmap)
         {
-            Radius = 64f * ((1.0f - 0.7f * (difficulty.CS - 5f) / 5f) / 2f);
-
-            totalVisibleTime = BeatmapDifficulty.ScaleWithRange(difficulty.AR, 1800f, 1200f, 450f);
-            fadeTime = BeatmapDifficulty.ScaleWithRange(difficulty.AR, 1200f, 800f, 300f);
-            hitWindow = BeatmapDifficulty.ScaleWithRange(difficulty.OD, 80, 50, 20);
-            waitingTime = hitObj.Time - hitWindow;
+            waitingTime = hitObj.Time - hitObj.ObjectTiming.HitWindow;
 
             currentDelayTime = 0f;
             currentTime = 0f;
@@ -37,7 +33,7 @@ namespace noobOsu.Game.HitObjects
         [BackgroundDependencyLoader]
         private void load()
         {
-            approachCircle = new HitObjectSprite(){
+            approachCircle = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -47,7 +43,7 @@ namespace noobOsu.Game.HitObjects
             approachCircle.Colour = Color;
             AddProperty(new SkinnableTextureProperty(approachCircle, "approachcircle"));
 
-            hitcircleArea = new HitObjectSprite(){
+            hitcircleArea = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -57,7 +53,7 @@ namespace noobOsu.Game.HitObjects
             hitcircleArea.Colour = Color;
             AddProperty(new SkinnableTextureProperty(hitcircleArea, "hitcircle", true));
 
-            hitcircleOverlay = new HitObjectSprite(){
+            hitcircleOverlay = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -87,12 +83,12 @@ namespace noobOsu.Game.HitObjects
             if (started) return;
             started = true;
             startApproach = true;
-            approachCircle.ScaleTo((float)Radius*2 * (float)approachCircle.ScaleFactor, totalVisibleTime);
+            approachCircle.ScaleTo((float)Radius*2 * (float)approachCircle.ScaleFactor, HitObject.ObjectTiming.TotalVisibleTime);
 
-            approachCircle.FadeInFromZero(fadeTime);
-            hitcircleArea.FadeInFromZero(fadeTime);
-            hitcircleOverlay.FadeInFromZero(fadeTime);
-            CircleNumbers.FadeInFromZero(fadeTime);
+            approachCircle.FadeInFromZero(HitObject.ObjectTiming.FadeTime);
+            hitcircleArea.FadeInFromZero(HitObject.ObjectTiming.FadeTime);
+            hitcircleOverlay.FadeInFromZero(HitObject.ObjectTiming.FadeTime);
+            CircleNumbers.FadeInFromZero(HitObject.ObjectTiming.FadeTime);
         }
 
         public override void End()
@@ -118,8 +114,8 @@ namespace noobOsu.Game.HitObjects
 
         protected override void Update()
         {
-            if (!ParentMap.Started) return;
             base.Update();
+            if (!ParentMap.Started) return;
 
             if (circleEnded) return;
             if (currentDelayTime < waitingTime)
@@ -136,7 +132,7 @@ namespace noobOsu.Game.HitObjects
             {
                 currentTime += (float)Clock.ElapsedFrameTime;
 
-                if (currentTime >= totalVisibleTime)
+                if (currentTime >= HitObject.ObjectTiming.TotalVisibleTime)
                 {
                     startApproach = false;
                     approachEnded = true;
@@ -147,7 +143,7 @@ namespace noobOsu.Game.HitObjects
             if (approachEnded)
             {
                 currentTime += (float)Clock.ElapsedFrameTime;
-                if (currentTime >= hitWindow)
+                if (currentTime >= HitObject.ObjectTiming.HitWindow)
                 {
                     circleEnded = true;
                     ParentMap.RemoveObject(this);

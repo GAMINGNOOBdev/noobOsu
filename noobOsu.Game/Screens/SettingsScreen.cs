@@ -30,7 +30,7 @@ namespace noobOsu.Game.Screens
         {
             box = new Box()
             {
-                Colour = new Color4(0.01f, 0.01f, 0.01f, 1.0f),
+                Colour = new Color4(0.1f, 0.1f, 0.1f, 0.5f),
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreLeft,
                 Origin = Anchor.CentreLeft,

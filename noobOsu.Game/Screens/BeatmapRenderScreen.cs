@@ -1,6 +1,7 @@
 using osuTK;
 using noobOsu.Game.Skins;
 using noobOsu.Game.Stores;
+using osu.Framework.Timing;
 using noobOsu.Game.Graphics;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Screens;
@@ -34,6 +35,11 @@ namespace noobOsu.Game.Screens
         public void AddChild(Drawable child)
         {
             AddInternal(child);
+        }
+
+        public void RemoveChild(Drawable child)
+        {
+            RemoveInternal(child, false);
         }
 
         public void SetMap(IBeatmapGeneral map)
@@ -71,6 +77,10 @@ namespace noobOsu.Game.Screens
 
             SkinFontStore.SetCurrentSkin(SelectedSkin);
 
+            noobOsuGame.GlobalGameCursor.DrawCursor = false;
+            noobOsuGame.GlobalSkinCursor.SwitchSkin(SelectedSkin, textures);
+            noobOsuGame.GlobalSkinCursor.DrawCursor = true;
+
             beatmap = new Beatmap(beatmapInfo);
             drawableBeatmap = new DrawableBeatmap(beatmap, this);
             drawableBeatmap.SetDrawContainer(contents);
@@ -106,6 +116,8 @@ namespace noobOsu.Game.Screens
             base.Dispose(isDisposing);
             drawableBeatmap.Dispose();
             SkinFontStore.SetCurrentSkin(null);
+            noobOsuGame.GlobalGameCursor.DrawCursor = true;
+            noobOsuGame.GlobalSkinCursor.DrawCursor = false;
         }
     }
 }

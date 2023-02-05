@@ -2,6 +2,7 @@ using osuTK;
 using osuTK.Graphics;
 using noobOsu.Game.Skins;
 using osu.Framework.Audio;
+using osu.Framework.Timing;
 using osu.Framework.Logging;
 using noobOsu.Game.Graphics;
 using osu.Framework.Graphics;
@@ -78,11 +79,10 @@ namespace noobOsu.Game.Beatmaps
             if (Started) return;
             ParentScheduler = parentScheduler;
             
-            // delay the starting for 10 ms to make sure the beatmap starts properly with the audio playing at the same time
             Started = true;
             ParentScheduler.AddDelayed( () => {
-                beatmap.MapAudio.Start();
-            }, GetInfo().Timing.FirstBPM + BeatmapDifficulty.ScaleWithRange(GetInfo().Difficulty.OD, 80, 50, 20));
+                beatmap.MapAudio.Start();    
+            }, GetInfo().Timing.FirstBPM);
         }
 
         public new void Dispose()
@@ -141,10 +141,10 @@ namespace noobOsu.Game.Beatmaps
                 obj = null;
 
                 if (beatmap.HitObjects[i].isCircle())
-                    drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
+                    drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, Colors));
 
                 if (beatmap.HitObjects[i].isSlider())
-                    drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
+                    drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, Colors));
 
                 if (beatmap.HitObjects[i].isSpinner())
                 {
@@ -172,10 +172,10 @@ namespace noobOsu.Game.Beatmaps
                 obj = null;
 
                 if (beatmap.HitObjects[i].isCircle())
-                    drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
+                    drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, Colors));
 
                 if (beatmap.HitObjects[i].isSlider())
-                    drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, beatmap.GetInfo().Difficulty, Colors));
+                    drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, Colors));
 
                 if (beatmap.HitObjects[i].isSpinner())
                 {

@@ -3,16 +3,16 @@ using noobOsu.Game.Beatmaps;
 using osu.Framework.Logging;
 using osu.Framework.Graphics;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics.Sprites;
+using noobOsu.Game.Skins.Drawables;
+using noobOsu.Game.Skins.Properties;
 using osu.Framework.Graphics.Textures;
-using noobOsu.Game.HitObjects.Drawables;
 using osu.Framework.Graphics.Containers;
 
 namespace noobOsu.Game.HitObjects
 {
     public partial class SliderStartCircle : CompositeDrawable
     {   
-        private HitObjectSprite approachCircle, hitcircleArea, hitcircleOverlay, sliderEndCircle, reverseArrow;
+        private SkinnableSprite approachCircle, hitcircleArea, hitcircleOverlay, sliderEndCircle, reverseArrow;
         private double totalVisibleTime, fadeTime, CurrentTime = 0;
         private double waitingTime, hitWindow;
         private Slider ParentSlider;
@@ -21,7 +21,7 @@ namespace noobOsu.Game.HitObjects
         
         public bool HasReverseArrow { get; private set; }
  
-        public SliderStartCircle(Slider parent, Vector2 circlePosition)
+        public SliderStartCircle(Slider parent)
         {
             ParentSlider = parent;
 
@@ -38,13 +38,13 @@ namespace noobOsu.Game.HitObjects
             waitingTime = ParentSlider.HitObject.Time - hitWindow;
 
             RelativePositionAxes = Axes.None;
-            Position = circlePosition;
+            Position = new Vector2(0);
         }
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            approachCircle = new HitObjectSprite(){
+            approachCircle = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -54,7 +54,7 @@ namespace noobOsu.Game.HitObjects
             approachCircle.Colour = ParentSlider.Color;
             ParentSlider.AddProperty(new SkinnableTextureProperty(approachCircle, "approachcircle"));
 
-            hitcircleArea = new HitObjectSprite(){
+            hitcircleArea = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -65,7 +65,7 @@ namespace noobOsu.Game.HitObjects
             ParentSlider.AddProperty(new SkinnableTextureProperty(hitcircleArea, "hitcircle", true));
             
 
-            hitcircleOverlay = new HitObjectSprite(){
+            hitcircleOverlay = new SkinnableSprite(){
                 RelativeSizeAxes = Axes.None,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -85,7 +85,7 @@ namespace noobOsu.Game.HitObjects
             AddInternal(approachCircle);
             if (HasReverseArrow)
             {
-                sliderEndCircle = new HitObjectSprite(){
+                sliderEndCircle = new SkinnableSprite(){
                     RelativeSizeAxes = Axes.None,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -94,7 +94,7 @@ namespace noobOsu.Game.HitObjects
                 sliderEndCircle.Scale = new Vector2((float)ParentSlider.Radius*2);
                 ParentSlider.AddProperty(new SkinnableTextureProperty(sliderEndCircle, "sliderendcircle"));
 
-                reverseArrow = new HitObjectSprite(){
+                reverseArrow = new SkinnableSprite(){
                     RelativeSizeAxes = Axes.None,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,

@@ -12,6 +12,7 @@ namespace noobOsu.Game.Beatmaps.Timing
         ITimingPoint GetTimingPoint(int timestamp);
         ITimingPoint GetTimingPoint(int timestamp, bool uninherited);
         double BPM_At(int timestamp);
+        double GetTimingOffset();
         IReadOnlyList<ITimingPoint> GetTimingPoints();
     }
 }

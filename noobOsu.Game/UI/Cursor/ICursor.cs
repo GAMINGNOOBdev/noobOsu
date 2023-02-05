@@ -1,11 +1,12 @@
 using osuTK;
 using osuTK.Input;
+using noobOsu.Game.Skins;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 
 namespace noobOsu.Game.UI.Cursor
 {
-    public interface ICursor : IDrawable
+    public interface ICursor : IDrawable, ISkinnable
     {
         CursorState State { get; }
 
@@ -15,6 +16,9 @@ namespace noobOsu.Game.UI.Cursor
         void DragStart(Vector2 startPosition);
         void DragProgress(MouseMoveEvent movement);
         void DragEnd();
+        void UpdateCursor();
+
+        void SetState(CursorState state);
 
         MouseButton AnyButtonPressed();
     }

@@ -2,8 +2,9 @@ using osuTK;
 using noobOsu.Game.Skins;
 using osu.Framework.Logging;
 using osu.Framework.Graphics.Textures;
+using noobOsu.Game.HitObjects.Drawables;
 
-namespace noobOsu.Game.HitObjects.Drawables
+namespace noobOsu.Game.Skins.Properties
 {
     public class SkinnableHitcircleNumberProperty : SkinnableProperty
     {
