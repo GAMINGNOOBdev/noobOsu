@@ -10,6 +10,8 @@ namespace noobOsu.Game.Skins
         private int CurrentColorIndex = 0;
         private int ComboNumber = 0;
 
+        public bool AllowSkip { get; set; } = true;
+
         public void AddColor(string color)
         {
             Colors.Add(IColorStore.FromString(color));
@@ -27,7 +29,7 @@ namespace noobOsu.Game.Skins
 
         public void Skip(int amount)
         {
-            if (Colors.Count == 0) return;
+            if (Colors.Count == 0 || !AllowSkip) return;
             CurrentColorIndex += amount;
             CurrentColorIndex %= Colors.Count;
         }

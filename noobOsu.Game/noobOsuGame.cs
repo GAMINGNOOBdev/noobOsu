@@ -1,15 +1,32 @@
 ﻿using osuTK;
-using osu.Framework.Allocation;
-using osu.Framework.Graphics;
-using osu.Framework.Screens;
 using noobOsu.Game.Screens;
+using noobOsu.Game.Beatmaps;
+using osu.Framework.Screens;
+using osu.Framework.Graphics;
+using osu.Framework.Allocation;
 
 namespace noobOsu.Game
 {
     public partial class noobOsuGame : noobOsuGameBase
     {
         public static noobOsuGame INSTANCE { get; private set; }
+        public static DiscordRichPresence UserRichPresence { get; private set; }
         public ScreenStack ScreenStack { get; private set; }
+
+        public static void UpdateRichPresence(IBeatmapGeneral map)
+        {
+            if (map != null)
+            {
+                UserRichPresence.Presence.Details = "Playing " + map.InterpretName + " - " + map.SongName + " (" + map.MapperName + ") [" + map.DifficultyName + "]";
+                UserRichPresence.Presence.State = "Clicking circles";
+            }
+            else
+            {
+                UserRichPresence.Presence.Details = null;
+                UserRichPresence.Presence.State = null;
+            }
+            UserRichPresence.UpdatePresence();
+        }
 
         public noobOsuGame() : base()
         {
@@ -20,7 +37,8 @@ namespace noobOsu.Game
         [BackgroundDependencyLoader]
         private void load()
         {
-            Child = ScreenStack = new ScreenStack { RelativeSizeAxes = Axes.Both };
+            Add(ScreenStack = new ScreenStack { RelativeSizeAxes = Axes.Both });
+            Add(UserRichPresence = new DiscordRichPresence());
             
             GlobalGameCursor.DrawCursor = true;
         }
@@ -31,6 +49,13 @@ namespace noobOsu.Game
             
             // start off with the map select, the next screens will be created and pushed after finishing then exited and disposed by the map select screen
             ScreenStack.Push(new MapSelectScreen());
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            UserRichPresence.DisposePresence();
+            UserRichPresence.Dispose();
+            base.Dispose(isDisposing);
         }
     }
 }

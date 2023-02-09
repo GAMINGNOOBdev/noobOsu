@@ -5,37 +5,38 @@ using System.Collections.Generic;
 
 namespace noobOsu.Game.Settings
 {
-    public class GameSettings
+    public static class GameSettings
     {
-        public static GameSettings INSTANCE { get; private set; }
         public static List<ISkin> Skins { get; private set; } = new List<ISkin>();
         
         public static ISkin GetCurrentSkin()
         {
-            if (INSTANCE == null)
-                return null;
-
-            return INSTANCE.CurrentSkin.Value;
+            return CurrentSkin.Value;
         }
+        public static float GetMasterVolume() => (float)(MasterVolume.Value / 100f);
+        public static float GetMusicVolume() => (float)(MusicVolume.Value / 100f);
+        public static float GetEffectVolume() => (float)(EffectVolume.Value / 100f);
 
-        public Bindable<ISkin> CurrentSkin = new Bindable<ISkin>();
-        public string LastSkinName = "default";
-        public BindableBool UseBeatmapSkins = new BindableBool(true);
-        public BindableBool UseBeatmapHitsounds = new BindableBool(true);
-        public BindableBool UseBeatmapColors = new BindableBool(true);
-        public BindableInt BeatmapBackgroundDim = new BindableInt(0){ MinValue = 0, MaxValue = 100, Default = 90 };
+        public static Bindable<ISkin> CurrentSkin = new Bindable<ISkin>();
+        public static string LastSkinName = "default";
+        public static BindableBool UseBeatmapSkins = new BindableBool(true);
+        public static BindableBool UseBeatmapHitsounds = new BindableBool(true);
+        public static BindableBool UseBeatmapColors = new BindableBool(true);
+        public static BindableInt BeatmapBackgroundDim = new BindableInt(0){ MinValue = 0, MaxValue = 100, Default = 90 };
+        public static BindableInt MasterVolume = new BindableInt(0){ MinValue = 0, MaxValue = 100, Default = 100 };
+        public static BindableInt MusicVolume = new BindableInt(0){ MinValue = 0, MaxValue = 100, Default = 100 };
+        public static BindableInt EffectVolume = new BindableInt(0){ MinValue = 0, MaxValue = 100, Default = 100 };
+        public static KeybindContainer GeneralKeybinds = new KeybindContainer();
         
-        public GameSettings()
+        public static void Init()
         {
-            if (INSTANCE != null) return;
-            INSTANCE = this;
-
             ReadSettings();
+            GeneralKeybinds.ReadKeybinds();
 
             CurrentSkin.BindValueChanged(
                 (value) => {
                     if (value != null)
-                        INSTANCE.LastSkinName = value.NewValue.General.Name;
+                        LastSkinName = value.NewValue.General.Name;
                 }
             );
 
@@ -55,12 +56,13 @@ namespace noobOsu.Game.Settings
                 CurrentSkin.Value = FindSkin("default");
         }
 
-        public void Dispose()
+        public static void Dispose()
         {
             SaveSettings();
+            GeneralKeybinds.SaveKeybinds();
         }
 
-        private void ReadSettings()
+        private static void ReadSettings()
         {
             if (!File.Exists("settings.ini"))
                 return;
@@ -98,13 +100,25 @@ namespace noobOsu.Game.Settings
                 {
                     BeatmapBackgroundDim.Value = int.Parse(splitLine[1]);
                 }
+                if (splitLine[0].Equals("MasterVolume"))
+                {
+                    MasterVolume.Value = int.Parse(splitLine[1]);
+                }
+                if (splitLine[0].Equals("MusicVolume"))
+                {
+                    MusicVolume.Value = int.Parse(splitLine[1]);
+                }
+                if (splitLine[0].Equals("EffectVolume"))
+                {
+                    EffectVolume.Value = int.Parse(splitLine[1]);
+                }
             }
 
             SettingsReader.Dispose();
             SettingsReader.Close();
         }
 
-        private void SaveSettings()
+        private static void SaveSettings()
         {
             // go back to the beginning of the file to overwrite everything
             StreamWriter SettingsWriter = new StreamWriter("settings.ini");
@@ -114,12 +128,15 @@ namespace noobOsu.Game.Settings
             SettingsWriter.WriteLine("UseBeatmapHitsounds = " + UseBeatmapHitsounds.Value);
             SettingsWriter.WriteLine("UseBeatmapColors = " + UseBeatmapColors.Value);
             SettingsWriter.WriteLine("BeatmapBackgroundDim = " + BeatmapBackgroundDim.Value);
+            SettingsWriter.WriteLine("MasterVolume = " + MasterVolume.Value);
+            SettingsWriter.WriteLine("MusicVolume = " + MusicVolume.Value);
+            SettingsWriter.WriteLine("EffectVolume = " + EffectVolume.Value);
 
             SettingsWriter.Dispose();
             SettingsWriter.Close();
         }
 
-        private ISkin FindSkin(string name)
+        private static ISkin FindSkin(string name)
         {
             foreach (ISkin skin in Skins)
             {

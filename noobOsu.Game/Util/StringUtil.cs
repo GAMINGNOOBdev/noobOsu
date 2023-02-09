@@ -16,6 +16,20 @@ namespace noobOsu.Game.Util
             return newString;
         }
 
+        public static string GetExtension(string src)
+        {
+            if (!src.Contains('.'))
+                return string.Empty;
+            return src.Substring(src.LastIndexOf('.')+1);
+        }
+
+        public static string GetExtensionless(string src)
+        {
+            if (!src.Contains('.'))
+                return src;
+            return src.Substring(0, src.LastIndexOf('.'));
+        }
+
         public static string RemoveQuotes(string src)
         {
             string newString = src;

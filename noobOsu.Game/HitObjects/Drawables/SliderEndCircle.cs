@@ -86,6 +86,8 @@ namespace noobOsu.Game.HitObjects
         {
             if (Ended) return;
             Ended = true;
+            if (ParentSlider.Sample != null)
+                ParentSlider.Sample.Play();
             sliderEndCircle.FadeOutFromOne(200);
             reverseArrow.FadeOutFromOne(200);
         }

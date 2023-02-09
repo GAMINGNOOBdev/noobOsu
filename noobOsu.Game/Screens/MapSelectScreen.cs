@@ -19,6 +19,7 @@ namespace noobOsu.Game.Screens
 
         private BeatmapScrollSelect beatmapSelect;
         private BasicButton settingsButton;
+        private SettingsOverlay settingsScreen;
 
         public MapSelectScreen()
         {
@@ -29,6 +30,8 @@ namespace noobOsu.Game.Screens
         [BackgroundDependencyLoader]
         private void load()
         {
+            settingsScreen = new SettingsOverlay();
+
             settingsButton = new BasicButton();
             settingsButton.Text = "Settings";
             settingsButton.Anchor = Anchor.BottomLeft;
@@ -36,7 +39,8 @@ namespace noobOsu.Game.Screens
             settingsButton.Size = new osuTK.Vector2(20 * "Settings".Length, 20);
             settingsButton.Scale = new osuTK.Vector2(2f);
             settingsButton.Action = () => {
-                noobOsuGame.INSTANCE.ScreenStack.Push(new SettingsScreen());
+                //noobOsuGame.INSTANCE.ScreenStack.Push(new SettingsScreen());
+                settingsScreen.Enter();
             };
 
             beatmapSelect = new BeatmapScrollSelect(){
@@ -56,6 +60,7 @@ namespace noobOsu.Game.Screens
             beatmapSelect.SelectRandom();
 
             AddInternal(settingsButton);
+            AddInternal(settingsScreen);
             AddInternal(beatmapSelect);
         }
 
@@ -82,9 +87,9 @@ namespace noobOsu.Game.Screens
 
         protected override void OnKeyUp(KeyUpEvent e)
         {
-            
             if (e.Key == Key.O && e.ControlPressed)
-                noobOsuGame.INSTANCE.ScreenStack.Push(new SettingsScreen());
+                settingsScreen.Enter();
+                //noobOsuGame.INSTANCE.ScreenStack.Push(new SettingsScreen());
             
         }
 

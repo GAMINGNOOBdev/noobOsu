@@ -16,10 +16,9 @@ namespace noobOsu.Game
     {
         protected override Container<Drawable> Content { get; }
 
-        private ExternalAssetStore ExternalSongTracks, ExternalSongSamples;
+        private ExternalAudioStore ExternalSongTracks, ExternalSongSamples;
         private ResourceStore<byte[]> tracksContianer, samplesContainer;
         private noobOsuAudioManager clientAudioManager;
-        private GameSettings Settings;
 
         public static GameCursorContainer GlobalGameCursor;
         public static SkinCursorContainer GlobalSkinCursor;
@@ -31,7 +30,7 @@ namespace noobOsu.Game
                 TargetDrawSize = new Vector2(1366, 768)
             });
 
-            Settings = new GameSettings();
+            GameSettings.Init();
         }
 
         [BackgroundDependencyLoader]
@@ -39,8 +38,8 @@ namespace noobOsu.Game
         {
             Resources.AddStore(new DllResourceStore(typeof(noobOsuResources).Assembly));
 
-            ExternalSongSamples = new ExternalAssetStore();
-            ExternalSongTracks = new ExternalAssetStore();
+            ExternalSongSamples = new ExternalAudioStore();
+            ExternalSongTracks = new ExternalAudioStore();
 
             tracksContianer = new ResourceStore<byte[]>();
             samplesContainer = new ResourceStore<byte[]>();
@@ -70,7 +69,7 @@ namespace noobOsu.Game
 
         protected override bool OnExiting()
         {
-            Settings.Dispose();
+            GameSettings.Dispose();
             return base.OnExiting();
         }
     }

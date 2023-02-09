@@ -57,14 +57,20 @@ namespace noobOsu.Game.Beatmaps.Timing
             Effects = int.Parse(object_values[7]);
         }
 
+        public string GetHitsound(int hitsound)
+        {
+            return ITimingPoint.GetSampleSetName(SampleSet) + "-" + ITimingPoint.GetSampleSoundName(hitsound);
+        }
+
         public ITimingPoint Clone() => new TimingPoint(ParsedExpression);
 
         public override string ToString()
         {
             if (Uninherited == 0)
-                return "Timing( " + TimeStamp + " ): {BeatLen: " + BeatLength + ", Inherited: true }";
+                return "Timing( " + TimeStamp + " ): {BeatLen: " + BeatLength + ", SampleSet: " + SampleSet + ", SampleIndex: " + SampleIndex + ", Inherited: true }";
             else
-                return "Timing( " + TimeStamp + " ): {BeatLen: " + BeatLength + ", Inherited: false, BPM: " + 1 / BeatLength * 60000 + " }";
+                return "Timing( " + TimeStamp + " ): {BeatLen: " + BeatLength + ", SampleSet: " + SampleSet + ", SampleIndex: " + SampleIndex +
+                       ", Inherited: false, BPM: " + 1 / BeatLength * 60000 + " }";
         }
     }
 }

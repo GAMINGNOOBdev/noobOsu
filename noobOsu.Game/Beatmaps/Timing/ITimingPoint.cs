@@ -27,10 +27,51 @@ namespace noobOsu.Game.Beatmaps.Timing
         // effects bitfield (bit zero=kiai time enable)
         int Effects { get; }
 
+        // return as a sample file name
+        string GetHitsound(int hitsound);
+
         // get as a string
         string ToString();
 
         // to clone an existing timing point
         ITimingPoint Clone();
+
+        // get the default timing hitsound
+        static string GetDefaultHitsound(int hitsound)
+        {
+            return GetSampleSetName(0) + "-" + GetSampleSoundName(hitsound);
+        }
+
+        static string GetSampleSetName(int setIdx)
+        {
+            switch (setIdx)
+            {
+                case 2:
+                    return "soft";
+
+                case 3:
+                    return "drum";
+
+                case 0:
+                case 1:
+                default:
+                    return "normal";
+            }
+        }
+
+        static string GetSampleSoundName(int soundIdx)
+        {
+            if((soundIdx & (1 << 0)) > 0)
+                return "hitnormal";
+            if((soundIdx & (1 << 1)) > 0)
+                return "hitwhistle";
+            if((soundIdx & (1 << 2)) > 0)
+                return "hitfinish";
+            if((soundIdx & (1 << 3)) > 0)
+                return "hitclap";
+
+                
+            return "hitnormal";
+        }
     }
 }

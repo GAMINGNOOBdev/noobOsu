@@ -63,9 +63,8 @@ namespace noobOsu.Game.Screens
 
             exitBeatmapButton = new BasicButton()
             {
+                Anchor = Anchor.BottomLeft,
                 Origin = Anchor.BottomLeft,
-                RelativePositionAxes = Axes.Y,
-                Y = 1f,
                 Text = "Back",
                 Size = new Vector2(20 * "Back".Length, 20),
                 Scale = new Vector2(2f),
@@ -96,6 +95,7 @@ namespace noobOsu.Game.Screens
         protected override void LoadComplete()
         {
             base.LoadComplete();
+            noobOsuGame.UpdateRichPresence(beatmapInfo);
         }
 
         protected override void Update()
@@ -116,6 +116,7 @@ namespace noobOsu.Game.Screens
             base.Dispose(isDisposing);
             drawableBeatmap.Dispose();
             SkinFontStore.SetCurrentSkin(null);
+            noobOsuGame.UpdateRichPresence(null);
             noobOsuGame.GlobalGameCursor.DrawCursor = true;
             noobOsuGame.GlobalSkinCursor.DrawCursor = false;
         }

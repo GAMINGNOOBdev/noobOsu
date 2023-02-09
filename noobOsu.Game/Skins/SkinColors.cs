@@ -44,7 +44,7 @@ namespace noobOsu.Game.Skins
 
     public class SkinColors : ISkinColors
     {
-        public IColorStore SkinComboColors { get; private set; } = new ColorStore();
+        public IColorStore SkinComboColors { get; private set; } = new ColorStore(){ AllowSkip = false };
         public Color4 InputOverlayText { get; set; } = new Color4(0, 0, 0, 1);
         public Color4 MenuGlow { get; set; } = new Color4(0, 78/255, 155/255, 1);
         public Color4? SliderBall { get; set; } = null;

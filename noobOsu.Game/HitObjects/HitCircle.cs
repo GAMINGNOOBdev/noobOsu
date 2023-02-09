@@ -1,5 +1,6 @@
 using osuTK;
 using noobOsu.Game.Skins;
+using osu.Framework.Audio;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Graphics;
 using osu.Framework.Allocation;
@@ -17,9 +18,9 @@ namespace noobOsu.Game.HitObjects
         private double waitingTime, currentDelayTime, currentTime;
         private bool ending = false;
 
-        public HitCircle(HitObject hitObj, IBeatmap beatmap, IColorStore colors) : base(hitObj, colors, beatmap)
+        public HitCircle(HitObject hitObj, IBeatmap beatmap, IColorStore colors, ISkin skin, bool useBeatmapHitsound, AudioManager audioManager) : base(hitObj, colors, beatmap)
         {
-            waitingTime = hitObj.Time - hitObj.ObjectTiming.HitWindow;
+            waitingTime = HitObject.Time - HitObject.ObjectTiming.HitWindow - HitObject.ObjectTiming.TotalVisibleTime;
 
             currentDelayTime = 0f;
             currentTime = 0f;
@@ -28,6 +29,11 @@ namespace noobOsu.Game.HitObjects
             approachEnded = false;
             circleEnded = false;
             started = false;
+
+            if (useBeatmapHitsound)
+                base.LoadHitsound(audioManager, "Songs/" + beatmap.CurrentMap.ParentSet.AsDirectoryName());
+            else
+                base.LoadHitsound(audioManager, "Skins/" + (skin.DirectoryName.EndsWith("/") ? skin.DirectoryName : skin.DirectoryName + "/"));
         }
 
         [BackgroundDependencyLoader]
@@ -95,17 +101,22 @@ namespace noobOsu.Game.HitObjects
         {
             if (ending) return;
             ending = true;
+
+            if (Sample != null)
+                Sample.Play();
             
             hitcircleArea.FadeOutFromOne(200);
             hitcircleOverlay.FadeOutFromOne(200);
+            CircleNumbers.ScaleTo(1.5f, 200);
+            CircleNumbers.FadeOutFromOne(200);
             hitcircleArea.ScaleTo((float)Radius*2 * 1.5f * (float)hitcircleArea.ScaleFactor, 200);
             hitcircleOverlay.ScaleTo((float)Radius*2 * 1.5f * (float)hitcircleOverlay.ScaleFactor, 200);
             approachCircle.Alpha = 0f;
-            CircleNumbers.Alpha = 0f;
         }
 
         public override void DisposeResources()
         {
+            base.DisposeResources();
             hitcircleArea.Dispose();
             hitcircleOverlay.Dispose();
             approachCircle.Dispose();
@@ -115,6 +126,7 @@ namespace noobOsu.Game.HitObjects
         protected override void Update()
         {
             base.Update();
+            COOL = currentDelayTime;
             if (!ParentMap.Started) return;
 
             if (circleEnded) return;

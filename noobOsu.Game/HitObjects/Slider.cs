@@ -2,6 +2,7 @@ using osuTK;
 using System;
 using osuTK.Graphics;
 using noobOsu.Game.Skins;
+using osu.Framework.Audio;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Logging;
 using osu.Framework.Graphics;
@@ -23,9 +24,9 @@ namespace noobOsu.Game.HitObjects
         private bool ending = false;
         public double Duration { get; private set; }
 
-        public Slider(HitObject hitObj, IBeatmap beatmap, IColorStore colors) : base(hitObj, colors, beatmap)
+        public Slider(HitObject hitObj, IBeatmap beatmap, IColorStore colors, ISkin skin, bool useBeatmapHitsound, AudioManager audioManager) : base(hitObj, colors, beatmap)
         {
-            waitingTime = HitObject.Time - HitObject.ObjectTiming.HitWindow;
+            waitingTime = HitObject.Time - HitObject.ObjectTiming.HitWindow - HitObject.ObjectTiming.TotalVisibleTime;
 
             // add the time it takes to complete the slider to the total visible time
             Duration = HitObject.EndTime - HitObject.Time;
@@ -37,6 +38,11 @@ namespace noobOsu.Game.HitObjects
             approachEnded = false;
             circleEnded = false;
             started = false;
+
+            if (useBeatmapHitsound)
+                base.LoadHitsound(audioManager, "Songs/" + beatmap.CurrentMap.ParentSet.AsDirectoryName());
+            else
+                base.LoadHitsound(audioManager, "Skins/" + (skin.DirectoryName.EndsWith("/") ? skin.DirectoryName : skin.DirectoryName + "/"));
         }
         
         [BackgroundDependencyLoader]
@@ -74,6 +80,9 @@ namespace noobOsu.Game.HitObjects
         {
             if (ending) return;
             ending = true;
+
+            if (Sample != null)
+                Sample.Play();
             
             path.FadeOutFromOne(200);
             Ball.End();
@@ -84,6 +93,7 @@ namespace noobOsu.Game.HitObjects
 
         public override void DisposeResources()
         {
+            base.DisposeResources();
             path.Dispose();
             sliderStart.DisposeResources();
             Ball.DisposeResources();
@@ -123,8 +133,9 @@ namespace noobOsu.Game.HitObjects
 
         protected override void Update()
         {
-            if (!ParentMap.Started) return;
             base.Update();
+            COOL = currentDelayTime;
+            if (!ParentMap.Started) return;
 
             if (circleEnded) return;
             if (currentDelayTime < waitingTime)
@@ -148,7 +159,8 @@ namespace noobOsu.Game.HitObjects
                     currentTime = 0f;
 
                     sliderStart.EndHitcircle();
-                    CircleNumbers.Alpha = 0;
+                    CircleNumbers.ScaleTo(1.5f, 200);
+                    CircleNumbers.FadeOutFromOne(200);
                     Ball.Start();
                 }
             }

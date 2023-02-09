@@ -1,10 +1,11 @@
-using osu.Framework.Graphics.Textures;
-using osu.Framework.IO.Stores;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using osu.Framework.Logging;
 using System.Threading.Tasks;
+using osu.Framework.IO.Stores;
+using System.Collections.Generic;
+using osu.Framework.Graphics.Textures;
 
 namespace noobOsu.Game.Stores
 {
@@ -28,6 +29,11 @@ namespace noobOsu.Game.Stores
 
         public virtual TextureUpload Get(string name)
         {
+            if (!File.Exists(name))
+            {
+                Logger.Log("Could not load image \"" + name + "\", maybe it doesn't exist", level: LogLevel.Error);
+                return null;
+            }
             if (filenames.Contains(name))
             {
                 return textures[ filenames.IndexOf(name) ];

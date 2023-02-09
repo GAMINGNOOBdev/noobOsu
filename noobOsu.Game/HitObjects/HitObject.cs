@@ -44,7 +44,7 @@ namespace noobOsu.Game.HitObjects
             HitSound = int.Parse(object_values[4]);
 
             ComboColorSkip = (Type >> 4) & 0b111;
-            EndTime = Time + (int)ObjectTiming.TotalVisibleTime + (int)ObjectTiming.HitWindow + 200;
+            EndTime = Time + (int)ObjectTiming.TotalVisibleTime + (int)ObjectTiming.HitWindow;
 
             // read additional info if this is a slider
             if (this.isSlider())
@@ -129,7 +129,9 @@ namespace noobOsu.Game.HitObjects
 
         public override string ToString()
         {
-            string infoString = GetTypeString(this) + "(x: " + rawPosition.X + " y: " + rawPosition.Y  + " bpm: " + 1 / ParentMap.GetInfo().Timing.BPM_At(Time) * 1000 * 60 + " starttime: " + Time;
+            string infoString = GetTypeString(this) + "(x: " + rawPosition.X + " y: " + rawPosition.Y  +
+                                " bpm: " + 1 / ParentMap.GetInfo().Timing.BPM_At(Time) * 1000 * 60 + " starttime: " + Time + 
+                                " hitsound: " + HitSound + " objTiming: " + ObjectTiming.ToString();
             if (isSlider())
             {
                 infoString += " endtime: " + EndTime + " repeat: " + SliderInformation.SlideRepeat;
@@ -141,7 +143,7 @@ namespace noobOsu.Game.HitObjects
             return infoString;
         }
 
-        private static string GetTypeString(HitObject obj)
+        public static string GetTypeString(HitObject obj)
         {
             if (obj.isCircle())
                 return "HitCircle";

@@ -25,6 +25,7 @@ namespace noobOsu.Game.Screens
         private Beatmap beatmap;
         private DrawableBeatmap drawableBeatmap;
         private BasicButton showTimings, showHitobjects, backbutton;
+        private SpriteText beatmapClockText;
         private IBeatmapGeneral beatmapInfo;
 
         public BeatmapDebugInfoScreen()
@@ -99,10 +100,20 @@ namespace noobOsu.Game.Screens
             drawableBeatmap.SetDrawContainer(contents);
             drawableBeatmap.ReadObjects(false);
 
+            beatmapClockText = new SpriteText()
+            {
+                Origin = Anchor.BottomCentre,
+                Anchor = Anchor.BottomCentre,
+                Colour = Colour4.LightBlue,
+                Font = FontUsage.Default.With(size: 20),
+            };
+            AddInternal(beatmapClockText);
+
             beatmap.Load(noobOsuAudioManager.INSTANCE, null);
             if (beatmap.MapAudio != null)
             {
                 AddInternal(beatmap.MapAudio);
+                drawableBeatmap.beatmapClock.SetTrack(beatmap.GetAudio());
                 beatmap.MapAudio.Looping = true;
                 beatmap.MapAudio.Start();
             }
@@ -122,6 +133,8 @@ namespace noobOsu.Game.Screens
 
         protected override void Update()
         {
+            drawableBeatmap?.beatmapClock.ProcessFrame();
+            beatmapClockText.Text = "Map Clock: " + drawableBeatmap?.beatmapClock.ToString();
         }
 
         protected override void OnKeyUp(KeyUpEvent e)

@@ -168,6 +168,9 @@ namespace noobOsu.Game.HitObjects
             hitcircleArea.ScaleTo((float)ParentSlider.Radius*2 * 1.5f * (float)hitcircleArea.ScaleFactor, 200);
             hitcircleOverlay.ScaleTo((float)ParentSlider.Radius*2 * 1.5f * (float)hitcircleOverlay.ScaleFactor, 200);
             approachCircle.Alpha = 0f;
+
+            if (ParentSlider.Sample != null)
+                ParentSlider.Sample.Play();
             
             if (HasReverseArrow)
             {

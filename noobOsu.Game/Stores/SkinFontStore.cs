@@ -153,7 +153,7 @@ namespace noobOsu.Game.Stores
         }
 
         // only numbers are supported
-        public bool HasGlyph(char c) => Char.IsDigit(c) && characters.Contains(c);
+        public bool HasGlyph(char c) => Char.IsDigit(c) && characters.Contains(c) && skin != null;
 
         public Task LoadFontAsync() => throw new System.NotImplementedException();
 
