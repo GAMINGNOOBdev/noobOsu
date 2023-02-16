@@ -32,10 +32,10 @@ namespace noobOsu.Game.HitObjects.Drawables
         public DrawableSample Sample { get; set; }
         public double COOL;
 
-        protected DrawableHitObject(HitObject hitObj, IColorStore colors, IBeatmap beatmap)
+        protected DrawableHitObject(IHitObject hitObj, IColorStore colors, IBeatmap beatmap)
         {
-            if (hitObj.isNewCombo()) colors.NextColor();
-            HitObject = hitObj;
+            HitObject = (HitObject)hitObj;
+            if (HitObject.IsNewCombo()) colors.NextColor();
             colors.Skip(HitObject.ComboColorSkip);
             Debug.Assert(colors != null);
             Color = (Color4)colors.GetColor();
@@ -59,13 +59,14 @@ namespace noobOsu.Game.HitObjects.Drawables
 
             ParentMap = beatmap;
 
-            if (HitObject.isSlider())
+            if (HitObject.IsSlider())
                 HitObject.setSliderInfo(timingPoint);
 
-            this.Depth = HitObject.Time;
+            //this.Depth = HitObject.Time;
+            Depth = ParentMap.ObjectDepths.GetDepth(HitObject);
 
             RelativePositionAxes = Axes.None;
-            Position = hitObj.Position;
+            Position = HitObject.Position;
             Radius = 64f * ((1.0f - 0.7f * (beatmap.GetInfo().Difficulty.CS - 5f) / 5f) / 2f);
             ProcessCustomClock = false;
 
@@ -83,6 +84,10 @@ namespace noobOsu.Game.HitObjects.Drawables
                     hitsoundSample = audioManager.GetSampleStore().Get( soundLocation + ITimingPoint.GetDefaultHitsound(HitObject.HitSound));
                 Sample = new DrawableSample(hitsoundSample, true);
                 Sample.Volume.Value = Settings.GameSettings.GetEffectVolume() * Settings.GameSettings.GetMasterVolume();
+
+                if (TimingInfo != null)
+                    Sample.Volume.Value = Sample.Volume.Value * (double)TimingInfo.Volume / 100d;
+
                 AddInternal(Sample);
             }
         }

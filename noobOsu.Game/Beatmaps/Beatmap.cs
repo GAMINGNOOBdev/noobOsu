@@ -20,7 +20,8 @@ namespace noobOsu.Game.Beatmaps
         private DrawableTrack mapAudio;
         private Track mapTrack;
 
-        public List<HitObject> HitObjects => hitObjects;
+        public IReadOnlyList<IHitObject> HitObjects => hitObjects;
+        public IHitObjectDepth ObjectDepths { get; private set; }
         public IBeatmapGeneral CurrentMap { get; private set; }
         public DrawableTrack MapAudio => mapAudio;
         public bool Started { get; set; } = false;
@@ -30,6 +31,7 @@ namespace noobOsu.Game.Beatmaps
             if (map == null) return;
             relative_path = "Songs/" + map.ParentSet.SetID + " " + map.ParentSet.SetName;
             CurrentMap = map;
+            ObjectDepths = new HitObjectDepth(this);
             ReadBeatmap(map);
         }
 

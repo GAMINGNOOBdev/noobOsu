@@ -82,9 +82,9 @@ namespace noobOsu.Game.Skins
         public bool SpinnerFrequencyModulate { get; private set; } = true;
         public bool SpinnerNoBlink { get; private set; } = false;
 
-        private Skin Parent;
+        private ISkin Parent;
 
-        public SkinGeneral(Skin p)
+        public SkinGeneral(ISkin p)
         {
             Parent = p;
         }

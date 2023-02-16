@@ -10,6 +10,7 @@ namespace noobOsu.Game.Skins
         Color4? GetColor();
         void RestartColor();
         int GetComboNumber();
+        int GetComboIndex();
         bool IsEmpty();
         
         static Color4 FromString(string s)

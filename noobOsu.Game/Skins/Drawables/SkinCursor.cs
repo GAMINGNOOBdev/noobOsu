@@ -118,6 +118,8 @@ namespace noobOsu.Game.Skins.Drawables
         
         public void SwitchSkin(ISkin newSkin, TextureStore textures)
         {
+            if (newSkin is DefaultSkin)
+                return;
             cursor?.ResetResolvedProperties();
             newSkin.ResolveSkinnables(new []{ cursor }, textures);
         }

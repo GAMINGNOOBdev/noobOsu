@@ -26,7 +26,7 @@ namespace noobOsu.Game.Screens
         private BasicSliderBar<int> masterVolume;
         private BasicSliderBar<int> effectVolume;
         private BasicSliderBar<int> musicVolume;
-        private SpriteText mapbgdimInfo;
+        private SpriteText mapbgdimInfo, masterVolumeInfo, effectVolumeInfo, musicVolumeInfo;
         private BasicButton backButton;
 
         public SettingsOverlay()
@@ -101,43 +101,77 @@ namespace noobOsu.Game.Screens
             {
                 Origin = Anchor.TopLeft,
                 Position = new Vector2(0, 130),
-                Font = FontUsage.Default.With(size: 30),
+                Font = FontUsage.Default.With(size: 20),
             };
-
             beatmapBgDim = new BasicSliderBar<int>()
             {
                 Origin = Anchor.TopLeft,
-                Position = new Vector2(0, 160),
-                Size = new Vector2(500, 30),
+                Position = new Vector2(0, 150),
+                Size = new Vector2(500, 10),
+                CornerRadius = 5f,
+                Masking = true,
             };
             beatmapBgDim.Current.BindTo(GameSettings.BeatmapBackgroundDim);
             beatmapBgDim.Current.BindValueChanged((val) => {
                 mapbgdimInfo.Text = "Background dim: " + val.NewValue + "%";
             }, true);
-            
+
+            masterVolumeInfo = new SpriteText()
+            {
+                Origin = Anchor.TopLeft,
+                Position = new Vector2(0, 170),
+                Font = FontUsage.Default.With(size: 20),
+            };
             masterVolume = new BasicSliderBar<int>()
             {
                 Origin = Anchor.TopLeft,
-                Position = new Vector2(0, 200),
-                Size = new Vector2(500, 30),
+                Position = new Vector2(0, 190),
+                Size = new Vector2(500, 10),
+                CornerRadius = 5f,
+                Masking = true,
             };
             masterVolume.Current.BindTo(GameSettings.MasterVolume);
+            masterVolume.Current.BindValueChanged((val) => {
+                masterVolumeInfo.Text = "Master volume: " + val.NewValue + "%";
+            }, true);
 
+            musicVolumeInfo = new SpriteText()
+            {
+                Origin = Anchor.TopLeft,
+                Position = new Vector2(0, 200),
+                Font = FontUsage.Default.With(size: 20),
+            };
             musicVolume = new BasicSliderBar<int>()
             {
                 Origin = Anchor.TopLeft,
-                Position = new Vector2(0, 240),
-                Size = new Vector2(500, 30),
+                Position = new Vector2(0, 220),
+                Size = new Vector2(500, 10),
+                CornerRadius = 5f,
+                Masking = true,
             };
             musicVolume.Current.BindTo(GameSettings.MusicVolume);
+            musicVolume.Current.BindValueChanged((val) => {
+                musicVolumeInfo.Text = "Music volume: " + val.NewValue + "%";
+            }, true);
 
+            effectVolumeInfo = new SpriteText()
+            {
+                Origin = Anchor.TopLeft,
+                Position = new Vector2(0, 230),
+                Font = FontUsage.Default.With(size: 20),
+            };
             effectVolume = new BasicSliderBar<int>()
             {
                 Origin = Anchor.TopLeft,
-                Position = new Vector2(0, 280),
-                Size = new Vector2(500, 30),
+                Position = new Vector2(0, 250),
+                Size = new Vector2(500, 10),
+                CornerRadius = 5f,
+                Masking = true,
             };
             effectVolume.Current.BindTo(GameSettings.EffectVolume);
+            effectVolume.Current.BindValueChanged((val) => {
+                effectVolumeInfo.Text = "Effect volume: " + val.NewValue + "%";
+            }, true);
 
             backButton = new BasicButton()
             {
@@ -153,16 +187,27 @@ namespace noobOsu.Game.Screens
             };
 
             settingsFlyout.Add(box);
+            
             settingsFlyout.Add(useBeatmapSkin);
             settingsFlyout.Add(useBeatmapColor);
             settingsFlyout.Add(useBeatmapHitsound);
+            
             settingsFlyout.Add(mapbgdimInfo);
             settingsFlyout.Add(beatmapBgDim);
+            
+            settingsFlyout.Add(masterVolumeInfo);
             settingsFlyout.Add(masterVolume);
+            
+            settingsFlyout.Add(musicVolumeInfo);
             settingsFlyout.Add(musicVolume);
+            
+            settingsFlyout.Add(effectVolumeInfo);
             settingsFlyout.Add(effectVolume);
+            
             settingsFlyout.Add(backButton);
+            
             settingsFlyout.Add(SkinSelect);
+            
             AddInternal(exitScreenBox);
             AddInternal(settingsFlyout);
 

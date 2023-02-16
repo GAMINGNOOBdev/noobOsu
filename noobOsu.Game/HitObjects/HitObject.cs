@@ -5,7 +5,7 @@ using noobOsu.Game.Beatmaps.Timing;
 
 namespace noobOsu.Game.HitObjects
 {
-    public class HitObject
+    public class HitObject : IHitObject
     {
         private readonly Vector2 position = new Vector2(0);
         private readonly Vector2 rawPosition = new Vector2(0);
@@ -47,29 +47,29 @@ namespace noobOsu.Game.HitObjects
             EndTime = Time + (int)ObjectTiming.TotalVisibleTime + (int)ObjectTiming.HitWindow;
 
             // read additional info if this is a slider
-            if (this.isSlider())
+            if (this.IsSlider())
             {
                 Path = new HitObjectPath(this);
                 ParseSliderInfo(object_values);
             }
         }
 
-        public bool isCircle()
+        public bool IsCircle()
         {
             return (Type & 1) > 0;
         }
 
-        public bool isSlider()
+        public bool IsSlider()
         {
             return (Type & (1 << 1)) > 0;
         }
 
-        public bool isSpinner()
+        public bool IsSpinner()
         {
             return (Type & (1 << 3)) > 0;
         }
 
-        public bool isNewCombo()
+        public bool IsNewCombo()
         {
             return (Type & (1 << 2)) > 0;
         }
@@ -132,7 +132,7 @@ namespace noobOsu.Game.HitObjects
             string infoString = GetTypeString(this) + "(x: " + rawPosition.X + " y: " + rawPosition.Y  +
                                 " bpm: " + 1 / ParentMap.GetInfo().Timing.BPM_At(Time) * 1000 * 60 + " starttime: " + Time + 
                                 " hitsound: " + HitSound + " objTiming: " + ObjectTiming.ToString();
-            if (isSlider())
+            if (IsSlider())
             {
                 infoString += " endtime: " + EndTime + " repeat: " + SliderInformation.SlideRepeat;
                 infoString += " sv(map): " + ParentMap.GetInfo().Difficulty.SliderMultiplier +  " sv(timing): " + Timing.BeatLength;
@@ -145,13 +145,13 @@ namespace noobOsu.Game.HitObjects
 
         public static string GetTypeString(HitObject obj)
         {
-            if (obj.isCircle())
+            if (obj.IsCircle())
                 return "HitCircle";
             
-            if (obj.isSlider())
+            if (obj.IsSlider())
                 return "Slider";
 
-            if (obj.isSpinner())
+            if (obj.IsSpinner())
                 return "Spinner";
             
             return "None";

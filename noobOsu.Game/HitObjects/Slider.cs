@@ -24,7 +24,7 @@ namespace noobOsu.Game.HitObjects
         private bool ending = false;
         public double Duration { get; private set; }
 
-        public Slider(HitObject hitObj, IBeatmap beatmap, IColorStore colors, ISkin skin, bool useBeatmapHitsound, AudioManager audioManager) : base(hitObj, colors, beatmap)
+        public Slider(IHitObject hitObj, IBeatmap beatmap, IColorStore colors, ISkin skin, bool useBeatmapHitsound, AudioManager audioManager) : base(hitObj, colors, beatmap)
         {
             waitingTime = HitObject.Time - HitObject.ObjectTiming.HitWindow - HitObject.ObjectTiming.TotalVisibleTime;
 

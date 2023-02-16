@@ -2,7 +2,6 @@ using osuTK;
 using noobOsu.Game.UI;
 using noobOsu.Resources;
 using noobOsu.Game.Stores;
-using osu.Framework.Timing;
 using noobOsu.Game.Settings;
 using osu.Framework.Graphics;
 using osu.Framework.IO.Stores;
@@ -23,8 +22,12 @@ namespace noobOsu.Game
         public static GameCursorContainer GlobalGameCursor;
         public static SkinCursorContainer GlobalSkinCursor;
 
+        public static noobOsuGameBase INSTANCE { get; private set; }
+
         protected noobOsuGameBase()
         {
+            INSTANCE = this;
+
             base.Content.Add(Content = new DrawSizePreservingFillContainer
             {
                 TargetDrawSize = new Vector2(1366, 768)

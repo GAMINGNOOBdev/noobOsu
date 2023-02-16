@@ -47,9 +47,9 @@ namespace noobOsu.Game.Skins
         public string Score { get; private set; } = "score";
         public string Combo { get; private set; } = "score";
 
-        private Skin Parent;
+        private ISkin Parent;
 
-        public SkinFont(Skin p)
+        public SkinFont(ISkin p)
         {
             Parent = p;
         }

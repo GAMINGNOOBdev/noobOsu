@@ -34,11 +34,13 @@ namespace noobOsu.Game.Screens
             INSTANCE = this;
         }
 
+        public void AddChild(Drawable child, bool dynamicSize) => AddChild(child);
         public void AddChild(Drawable child)
         {
             AddInternal(child);
         }
 
+        public void RemoveChild(Drawable child, bool dynamicSize) => RemoveChild(child);
         public void RemoveChild(Drawable child)
         {
             RemoveInternal(child, false);

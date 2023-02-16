@@ -9,7 +9,7 @@ namespace noobOsu.Game
 {
     public partial class noobOsuGame : noobOsuGameBase
     {
-        public static noobOsuGame INSTANCE { get; private set; }
+        public static new noobOsuGame INSTANCE { get; private set; }
         public static DiscordRichPresence UserRichPresence { get; private set; }
         public ScreenStack ScreenStack { get; private set; }
 

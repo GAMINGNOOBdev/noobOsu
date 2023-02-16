@@ -39,7 +39,6 @@ namespace noobOsu.Game.Screens
             settingsButton.Size = new osuTK.Vector2(20 * "Settings".Length, 20);
             settingsButton.Scale = new osuTK.Vector2(2f);
             settingsButton.Action = () => {
-                //noobOsuGame.INSTANCE.ScreenStack.Push(new SettingsScreen());
                 settingsScreen.Enter();
             };
 
@@ -89,8 +88,6 @@ namespace noobOsu.Game.Screens
         {
             if (e.Key == Key.O && e.ControlPressed)
                 settingsScreen.Enter();
-                //noobOsuGame.INSTANCE.ScreenStack.Push(new SettingsScreen());
-            
         }
 
         public override void OnSuspending(ScreenTransitionEvent e) => ToNextScreen(); 

@@ -72,49 +72,59 @@ namespace noobOsu.Game
 
         public void UpdatePresence()
         {
-            client?.SetPresence(Presence);
+            if (client != null)
+                client.SetPresence(Presence);
         }
 
         private void OnReady(object sender, ReadyMessage args)
         {
-            //Console.WriteLine("On Ready. RPC Version: {0}", args.Version);
         }
         private void OnClose(object sender, CloseMessage args)
         {
-            //Console.WriteLine("Lost Connection with client because of '{0}'", args.Reason);
         }
         private void OnError(object sender, ErrorMessage args)
         {
-            //Console.WriteLine("Error occured within discord. ({1}) {0}", args.Message, args.Code);
-            client.Deinitialize();
+            if (client == null)
+                return;
+
+            try
+            {
+                client.Deinitialize();
+            }
+            catch (DiscordRPC.Exceptions.UninitializedException) {}
+
             client.Dispose();
             client = null;
         }
 
         private void OnConnectionEstablished(object sender, ConnectionEstablishedMessage args)
         {
-            //Console.WriteLine("Pipe Connection Established. Valid on pipe #{0}", args.ConnectedPipe);
+
         }
         private void OnConnectionFailed(object sender, ConnectionFailedMessage args)
         {
-            //Console.WriteLine("Pipe Connection Failed. Could not connect to pipe #{0}", args.FailedPipe);
-            client.Deinitialize();
+            if (client == null)
+                return;
+
+            try
+            {
+                client.Deinitialize();
+            }
+            catch (DiscordRPC.Exceptions.UninitializedException) {}
+
             client.Dispose();
             client = null;
         }
 
         private void OnPresenceUpdate(object sender, PresenceMessage args)
         {
-            //Console.WriteLine("Rich Presence Updated. Playing {0}", args.Presence == null ? "Nothing (NULL)" : args.Presence.State);
         }
 
         private void OnSubscribe(object sender, SubscribeMessage args)
         {
-            //Console.WriteLine("Subscribed: {0}", args.Event);
         }
         private void OnUnsubscribe(object sender, UnsubscribeMessage args)
         {
-            //Console.WriteLine("Unsubscribed: {0}", args.Event);
         }
         
         private void OnJoin(object sender, JoinMessage args)
@@ -136,7 +146,7 @@ namespace noobOsu.Game
             // Console.WriteLine(" - User's Snowflake: {0}", args.User.ID);
 
             DiscordRpcClient client = (DiscordRpcClient)sender;
-            client.Respond(args, false);
+            client.Respond(args, true);
         }
 
     }

@@ -1,4 +1,5 @@
 using osuTK;
+using System.IO;
 using osuTK.Graphics;
 using noobOsu.Game.Skins;
 using noobOsu.Game.Audio;
@@ -44,6 +45,8 @@ namespace noobOsu.Game.Beatmaps
         }
 
         public Beatmap Map => beatmap;
+        public IReadOnlyList<IHitObject> HitObjects => Map.HitObjects;
+        public IHitObjectDepth ObjectDepths => Map.ObjectDepths;
         public bool Started { get; set; } = false;
         public IBeatmapGeneral CurrentMap => beatmap?.CurrentMap;
 
@@ -72,10 +75,6 @@ namespace noobOsu.Game.Beatmaps
         public new void Update()
         {
             beatmapClock.ProcessFrame();
-            /*if (GetAudio().HasCompleted)
-            {
-                this.Dispose();
-            }*/
         }
 
         public Track GetAudio() => beatmap.GetAudio();
@@ -90,7 +89,6 @@ namespace noobOsu.Game.Beatmaps
             ParentScheduler = parentScheduler;
             Started = true;
             beatmap.MapAudio.Start();
-            //beatmapClock.MapOffset = beatmap.GetInfo().Timing.GetTimingOffset();
         }
 
         public new void Dispose()
@@ -121,23 +119,28 @@ namespace noobOsu.Game.Beatmaps
                 }
             }
 
-            if (!GetInfo().Events.GetBackgroundIfPresent().Equals(string.Empty))
+            string imageName = GetInfo().Events.GetBackgroundIfPresent();
+            string imagePath = "Songs/" + CurrentMap.ParentSet.SetID + " " + CurrentMap.ParentSet.SetName + "/" + imageName;
+            if (!imageName.Equals(string.Empty))
             {
-                beatmapBackground = new Sprite(){
-                    Depth = float.MaxValue,
-                    RelativeSizeAxes = Axes.Both,
-                    Texture = Textures.Get("Songs/" + CurrentMap.ParentSet.SetID + " " + CurrentMap.ParentSet.SetName + "/" + GetInfo().Events.GetBackgroundIfPresent()),
-                };
-                ParentContainer.AddChild(beatmapBackground);
+                if (File.Exists(imagePath))
+                {
+                    beatmapBackground = new Sprite(){
+                        Depth = float.MaxValue,
+                        RelativeSizeAxes = Axes.Both,
+                        Texture = Textures.Get(imagePath),
+                    };
+                    ParentContainer.AddChild(beatmapBackground);
 
-                beatmapBackgroundDim = new Box(){
-                    Depth = float.MaxValue - 1,
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = Color4.Black,
-                    Alpha = 0.5f,
-                };
-                Settings.GameSettings.BeatmapBackgroundDim.BindValueChanged((val) => { beatmapBackgroundDim.Alpha = val.NewValue / 100f; }, true);
-                ParentContainer.AddChild(beatmapBackgroundDim);
+                    beatmapBackgroundDim = new Box(){
+                        Depth = float.MaxValue - 1,
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = Color4.Black,
+                        Alpha = 0.5f,
+                    };
+                    Settings.GameSettings.BeatmapBackgroundDim.BindValueChanged((val) => { beatmapBackgroundDim.Alpha = val.NewValue / 100f; }, true);
+                    ParentContainer.AddChild(beatmapBackgroundDim);
+                }
             }
 
             IColorStore Colors = CurrentSkin.Colors.SkinComboColors;
@@ -154,13 +157,13 @@ namespace noobOsu.Game.Beatmaps
             {
                 obj = null;
 
-                if (beatmap.HitObjects[i].isCircle())
+                if (beatmap.HitObjects[i].IsCircle())
                     drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, Colors, CurrentSkin, useBeatmapHitsounds, audioManager){Clock = beatmapClock});
 
-                if (beatmap.HitObjects[i].isSlider())
+                if (beatmap.HitObjects[i].IsSlider())
                     drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, Colors, CurrentSkin, useBeatmapHitsounds, audioManager){Clock = beatmapClock});
 
-                if (beatmap.HitObjects[i].isSpinner())
+                if (beatmap.HitObjects[i].IsSpinner())
                 {
                     // TODO: --- add spinners ---
                 }
@@ -187,13 +190,13 @@ namespace noobOsu.Game.Beatmaps
             {
                 obj = null;
 
-                if (beatmap.HitObjects[i].isCircle())
+                if (beatmap.HitObjects[i].IsCircle())
                     drawableObjects.Add(obj = new HitCircle(beatmap.HitObjects[i], this, Colors, CurrentSkin, useBeatmapHitsounds, null){Clock = beatmapClock});
 
-                if (beatmap.HitObjects[i].isSlider())
+                if (beatmap.HitObjects[i].IsSlider())
                     drawableObjects.Add(obj = new Slider(beatmap.HitObjects[i], this, Colors, CurrentSkin, useBeatmapHitsounds, null){Clock = beatmapClock});
 
-                if (beatmap.HitObjects[i].isSpinner())
+                if (beatmap.HitObjects[i].IsSpinner())
                 {
                     // TODO: --- add spinners ---
                 }

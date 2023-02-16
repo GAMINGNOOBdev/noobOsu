@@ -1,7 +1,6 @@
 using System.IO;
 using noobOsu.Game.Stores;
 using noobOsu.Game.UI.Cursor;
-using osu.Framework.Graphics;
 using System.Collections.Generic;
 using noobOsu.Game.Skins.Drawables;
 using noobOsu.Game.Skins.Properties;
@@ -64,19 +63,19 @@ namespace noobOsu.Game.Skins
                     {
                         case ISkinnableProperty.Type.Texture:
                         case ISkinnableProperty.Type.StaticImage:
-                            if (File.Exists("Skins/" + DirectoryName + "/" + property.Name + "@2x.png"))
+                            if (Util.SkinUtil.ImageExists("Skins/" + DirectoryName + "/" + property.Name + "@2x"))
                             {
                                 property.SetScale(2);
-                                property.Resolve(textureStore.Get("Skins/" + DirectoryName + "/" + property.Name + "@2x.png"));
+                                property.Resolve(textureStore.Get("Skins/" + DirectoryName + "/" + property.Name + "@2x"));
                                 break;
                             }
-                            if (File.Exists("Skins/" + DirectoryName + "/" + property.Name + ".png"))
+                            if (Util.SkinUtil.ImageExists("Skins/" + DirectoryName + "/" + property.Name))
                             {
                                 property.SetScale(1);
-                                property.Resolve(textureStore.Get("Skins/" + DirectoryName + "/" + property.Name + ".png"));
+                                property.Resolve(textureStore.Get("Skins/" + DirectoryName + "/" + property.Name));
                                 break;
                             }
-                            property.Resolve(textureStore.Get("Skins/default/" + property.Name + ".png"));
+                            property.Resolve(textureStore.Get("default/" + property.Name));
                             break;
                         
                         case ISkinnableProperty.Type.Color:

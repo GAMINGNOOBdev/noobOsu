@@ -1,7 +1,6 @@
 using osuTK;
 using noobOsu.Game.Skins;
 using noobOsu.Game.Stores;
-using osu.Framework.Timing;
 using noobOsu.Game.Graphics;
 using noobOsu.Game.Beatmaps;
 using osu.Framework.Screens;
@@ -9,7 +8,6 @@ using osu.Framework.Logging;
 using osu.Framework.Graphics;
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
@@ -32,11 +30,13 @@ namespace noobOsu.Game.Screens
             INSTANCE = this;
         }
 
+        public void AddChild(Drawable child, bool dynamicSize) => AddChild(child);
         public void AddChild(Drawable child)
         {
             AddInternal(child);
         }
 
+        public void RemoveChild(Drawable child, bool dynamicSize) => RemoveChild(child);
         public void RemoveChild(Drawable child)
         {
             RemoveInternal(child, false);
@@ -75,7 +75,6 @@ namespace noobOsu.Game.Screens
             AddInternal(exitBeatmapButton);
 
             SkinFontStore.SetCurrentSkin(SelectedSkin);
-
             noobOsuGame.GlobalGameCursor.DrawCursor = false;
             noobOsuGame.GlobalSkinCursor.SwitchSkin(SelectedSkin, textures);
             noobOsuGame.GlobalSkinCursor.DrawCursor = true;
@@ -88,8 +87,6 @@ namespace noobOsu.Game.Screens
             drawableBeatmap.StartBeatmap(Scheduler);
 
             AddInternal(drawableBeatmap);
-
-            Logger.Log("drawsize: " + contents.DrawSize + " size: " + contents.Size);
         }
 
         protected override void LoadComplete()

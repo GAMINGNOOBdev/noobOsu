@@ -2,6 +2,7 @@ using osuTK;
 using System.IO;
 using noobOsu.Game.UI.Cursor;
 using osu.Framework.Graphics;
+using osu.Framework.IO.Stores;
 using System.Collections.Generic;
 using noobOsu.Game.Skins.Drawables;
 using osu.Framework.Graphics.Sprites;

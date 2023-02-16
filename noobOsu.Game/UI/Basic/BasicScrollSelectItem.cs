@@ -29,6 +29,9 @@ namespace noobOsu.Game.UI.Basic
         // state of this item
         ScrollSelectItemState State { get; }
 
+        // wether this object is currently shown on screen
+        bool IsShown { get; }
+
         // called to (de-)select this item
         void Select();
         void Deselect();
@@ -41,6 +44,7 @@ namespace noobOsu.Game.UI.Basic
     {
         public IScrollSelect<T> ParentSelect { get; private set; }
         public string ItemName { get; private set; }
+        public bool IsShown { get; set; } = true;
         public float SizeY { get; set; }
         
         public T Value {
@@ -67,14 +71,17 @@ namespace noobOsu.Game.UI.Basic
             set
             {
                 if (value)
-                    this.FadeIn(100);
+                {
+                    this.Show();
+                    IsShown = true;
+                }
                 else
-                    this.FadeOut(100);
+                {
+                    this.Hide();
+                    IsShown = false;
+                }
             }
         }
-
-        private ScrollSelectItemState state = ScrollSelectItemState.Inactive;
-        private T itemValue;
 
         protected readonly FilterableDrawSizePreservingFillContainer Content = new FilterableDrawSizePreservingFillContainer(){
             TargetDrawSize = new Vector2(350, 50),
@@ -83,6 +90,8 @@ namespace noobOsu.Game.UI.Basic
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
         };
+        private ScrollSelectItemState state = ScrollSelectItemState.Inactive;
+        private T itemValue;
 
 
         public BasicScrollSelectItem(string name, T value, IScrollSelect<T> parent)

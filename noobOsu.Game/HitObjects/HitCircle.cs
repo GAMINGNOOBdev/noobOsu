@@ -18,7 +18,7 @@ namespace noobOsu.Game.HitObjects
         private double waitingTime, currentDelayTime, currentTime;
         private bool ending = false;
 
-        public HitCircle(HitObject hitObj, IBeatmap beatmap, IColorStore colors, ISkin skin, bool useBeatmapHitsound, AudioManager audioManager) : base(hitObj, colors, beatmap)
+        public HitCircle(IHitObject hitObj, IBeatmap beatmap, IColorStore colors, ISkin skin, bool useBeatmapHitsound, AudioManager audioManager) : base(hitObj, colors, beatmap)
         {
             waitingTime = HitObject.Time - HitObject.ObjectTiming.HitWindow - HitObject.ObjectTiming.TotalVisibleTime;
 

@@ -18,7 +18,7 @@ namespace noobOsu.Game.UI.Basic
         };
 
         private readonly List<IScrollSelectItem<T>> items = new List<IScrollSelectItem<T>>();
-        private readonly SearchContainer<Drawable> SearchContents;
+        private readonly BasicScrollSearchContainer<Drawable> SearchContents;
         private IScrollSelectItem<T> currentSelected;
         private readonly BasicTextBox SearchBar;
         private float nextItemY = 0f;
@@ -32,8 +32,9 @@ namespace noobOsu.Game.UI.Basic
                     RelativeSizeAxes = Axes.X,
                     Size = new Vector2(1, 40),
                 },
-                SearchContents = new SearchContainer<Drawable>(){
+                SearchContents = new BasicScrollSearchContainer<Drawable>(){
                     Margin = new MarginPadding { Top = 40 },
+                    Padding = new MarginPadding { Bottom = 40 },
                     RelativeSizeAxes = Axes.Both,
                 }
             };
@@ -49,11 +50,18 @@ namespace noobOsu.Game.UI.Basic
             foreach (IScrollSelectItem<T> item in items)
             {
                 ((Drawable)item).Position = new Vector2(((Drawable)item).X, nextItemY);
-                nextItemY += item.SizeY + ITEM_SPACING;
+                
+                if (item.IsShown)
+                    nextItemY += item.SizeY + ITEM_SPACING;
 
-                SearchContents.Add((Drawable)item);
+                SearchContents.AddItem((Drawable)item);
             }
             FinishAdding();
+        }
+
+        protected override void Update()
+        {
+            InvalidateItems();
         }
 
         public void Select(IScrollSelectItem<T> item)
@@ -87,13 +95,12 @@ namespace noobOsu.Game.UI.Basic
                 nextItemY += item.SizeY + ITEM_SPACING;
 
                 items.Add(item);
-                SearchContents.Add((Drawable)item);
+                SearchContents.AddItem((Drawable)item);
             }
         }
 
         // we have to add an empty drawable because if the last element gets bigger by expansion the scroll container still stays the same
-        public void FinishAdding() => SearchContents.Add(MakeEmptyDrawable(nextItemY));
-        //public void FinishAdding() => Contents.Add(MakeEmptyDrawable(nextItemY));
+        public void FinishAdding() => SearchContents.AddItem(MakeEmptyDrawable(nextItemY));
 
         public IScrollSelectItem<T> GetItem(string name)
         {
@@ -116,7 +123,7 @@ namespace noobOsu.Game.UI.Basic
             {
                 item.Removed();
                 items.Remove(item);
-                SearchContents.Remove((Drawable)item, false);
+                SearchContents.RemoveItem((Drawable)item, false);
             }
         }
 
@@ -127,7 +134,7 @@ namespace noobOsu.Game.UI.Basic
             {
                 item.Removed();
                 items.Remove(item);
-                SearchContents.Remove((Drawable)item, false);
+                SearchContents.RemoveItem((Drawable)item, false);
             }
         }
 

@@ -52,6 +52,8 @@ namespace noobOsu.Game.Skins
 
         public int GetComboNumber() => ComboNumber;
 
+        public int GetComboIndex() => CurrentColorIndex;
+
         public bool IsEmpty() => Colors.Count == 0;
     }
 }

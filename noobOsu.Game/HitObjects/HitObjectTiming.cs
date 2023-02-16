@@ -13,6 +13,9 @@ namespace noobOsu.Game.HitObjects
         // how much time there is for the user to interact with this hitobject (not used on slider bodies)
         double HitWindow { get; }
 
+        // for how long this object will exist (only works for circles for now)
+        double TotalLifespan();
+
         string ToString();
     }
 
@@ -28,6 +31,8 @@ namespace noobOsu.Game.HitObjects
             FadeTime = BeatmapDifficulty.ScaleWithRange(difficulty.AR, 1200f, 800f, 300f);
             HitWindow = BeatmapDifficulty.ScaleWithRange(difficulty.OD, 80, 50, 20);
         }
+
+        public double TotalLifespan() => TotalVisibleTime + HitWindow + 200;
 
         public override string ToString()
         {

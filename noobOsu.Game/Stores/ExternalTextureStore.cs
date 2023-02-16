@@ -11,6 +11,12 @@ namespace noobOsu.Game.Stores
 {
     public partial class ExternalTextureStore : IResourceStore<TextureUpload>
     {
+        private static string[] Extensions = new string[]{
+            ".png",
+            ".jpg",
+            ".jpeg"
+        };
+
         private readonly List<Stream> filestreams = new List<Stream>();
         private readonly List<string> filenames = new List<string>();
         private readonly List<TextureUpload> textures = new List<TextureUpload>();
@@ -29,11 +35,25 @@ namespace noobOsu.Game.Stores
 
         public virtual TextureUpload Get(string name)
         {
-            if (!File.Exists(name))
+            if (Util.StringUtil.GetExtension(name).Equals(string.Empty))
             {
-                Logger.Log("Could not load image \"" + name + "\", maybe it doesn't exist", level: LogLevel.Error);
-                return null;
+                bool found = false;
+                string newName = string.Empty;
+                foreach (string extension in Extensions)
+                {
+                    newName = name + extension;
+                    found = File.Exists(newName);
+
+                    if (found) break;
+                }
+                if (!found)
+                {
+                    Logger.Log("Could not load image \"" + name + "\", maybe it doesn't exist", level: LogLevel.Error);
+                    return null;
+                }
+                name = newName;
             }
+            
             if (filenames.Contains(name))
             {
                 return textures[ filenames.IndexOf(name) ];
@@ -51,6 +71,22 @@ namespace noobOsu.Game.Stores
 
         public Stream GetStream(string name)
         {
+            if (Util.StringUtil.GetExtension(name).Equals(string.Empty))
+            {
+                bool found = false;
+                string newName = string.Empty;
+                foreach (string extension in Extensions)
+                {
+                    newName = name + extension;
+                    found = File.Exists(newName);
+
+                    if (found) break;
+                }
+                if (!found)
+                    return null;
+                name = newName;
+            }
+
             if (filenames.Contains(name))
             {
                 return filestreams[filenames.IndexOf(name)];

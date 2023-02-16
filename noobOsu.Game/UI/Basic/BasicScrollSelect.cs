@@ -42,7 +42,7 @@ namespace noobOsu.Game.UI.Basic
 
         public BasicScrollSelect() : base()
         {
-            InternalChild = Contents = Contents = new BasicScrollContainer<Drawable>(Direction.Vertical){
+            InternalChild = Contents = new BasicScrollContainer<Drawable>(Direction.Vertical){
                 RelativeSizeAxes = Axes.Both,
             };
         }

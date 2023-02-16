@@ -55,9 +55,9 @@ namespace noobOsu.Game.Skins
         public Color4 SpinnerBackground { get; set; } = new Color4(100/255, 100/255, 100/255, 1);
         public Color4 StarBreakAdditive { get; set; } = new Color4(1, 182/255, 193/255, 1);
 
-        private Skin Parent;
+        private ISkin Parent;
 
-        public SkinColors(Skin p)
+        public SkinColors(ISkin p)
         {
             Parent = p;
         }

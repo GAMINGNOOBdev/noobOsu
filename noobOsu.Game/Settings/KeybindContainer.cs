@@ -10,14 +10,27 @@ namespace noobOsu.Game.Settings
     public class KeybindContainer
     {
         private readonly List<SerializableKeybind<Key>> KeybindList = new List<SerializableKeybind<Key>>();
+        private readonly List<Keybind<Key>> ActiveKeybinds = new List<Keybind<Key>>();
 
         public IReadOnlyList<SerializableKeybind<Key>> Keybinds => KeybindList;
+
+        public void BindTo(IKeyBindable boundObject)
+        {
+            ActiveKeybinds.Clear();
+            foreach (ITypedKeybind<Key> bind in Keybinds)
+            {
+                Keybind<Key> keybind = new Keybind<Key>(bind, boundObject);
+                boundObject.AddKeybind(keybind);
+                ActiveKeybinds.Add(keybind);
+            }
+        }
 
         public void ReadKeybinds()
         {
             if (!File.Exists("keybinds.ini"))
                 return;
 
+            KeybindList.Clear();
             StreamReader KeybindsReader = new StreamReader("keybinds.ini");
 
             string line;

@@ -1,6 +1,7 @@
 using osuTK;
 using osuTK.Graphics;
 using noobOsu.Game.Beatmaps;
+using noobOsu.Game.Graphics;
 using noobOsu.Game.UI.Basic;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
@@ -12,7 +13,7 @@ using osu.Framework.Graphics.Containers;
 
 namespace noobOsu.Game.UI.Beatmap
 {
-    public partial class BeatmapScrollSelectItem : BasicScrollSelectItem<BeatmapSet>
+    public partial class BeatmapScrollSelectItem : BasicScrollSelectItem<BeatmapSet>, IExternalCanAddChildren
     {
         private BeatmapScrollSelectItemContent LastItem;
         private BeatmapScrollSelectItemHeader header;
@@ -60,11 +61,30 @@ namespace noobOsu.Game.UI.Beatmap
             base.OnHoverLost(e);
         }
 
-        public void InsertItemContent(BeatmapScrollSelectItemContent content)
+        public void AddChild(Drawable child) => AddChild(child, true);
+        public void AddChild(Drawable child, bool dynamicHeight)
         {
-            Content.Add(content);
-            SizeY += BasicScrollSelect<object>.ITEM_SPACING + content.SizeY;
+            Content.Add(child);
+            if (dynamicHeight)
+                AddChildSize(child);
             ParentSelect.InvalidateItems();
+        }
+        public void AddChildSize(Drawable child)
+        {
+            SizeY += BasicScrollSelect<object>.ITEM_SPACING + ((BeatmapScrollSelectItemContent)child).SizeY;
+        }
+        
+        public void RemoveChild(Drawable child) => RemoveChild(child, true);
+        public void RemoveChild(Drawable child, bool dynamicHeight)
+        {
+            Content.Remove(child, false);
+            if (dynamicHeight)
+                RemoveChildSize(child);
+            ParentSelect.InvalidateItems();
+        }
+        public void RemoveChildSize(Drawable child)
+        {
+            SizeY -= BasicScrollSelect<object>.ITEM_SPACING + ((BeatmapScrollSelectItemContent)child).SizeY;
         }
 
         public void SetSelectedItem(BeatmapScrollSelectItemContent item)
@@ -73,13 +93,6 @@ namespace noobOsu.Game.UI.Beatmap
                 LastItem.Deselect();
             
             LastItem = item;
-        }
-
-        public void RemoveItemContent(BeatmapScrollSelectItemContent content)
-        {
-            Content.Remove(content, false);
-            SizeY -= BasicScrollSelect<object>.ITEM_SPACING + content.SizeY;
-            ParentSelect.InvalidateItems();
         }
 
         protected override void ItemStateChanged(ScrollSelectItemState newstate)
@@ -111,9 +124,9 @@ namespace noobOsu.Game.UI.Beatmap
             set
             {
                 if (value)
-                    this.FadeIn(100);
+                    this.Show();
                 else
-                    this.FadeOut(100);
+                    this.Hide();
             }
         }
         public bool FilteringActive
@@ -154,9 +167,15 @@ namespace noobOsu.Game.UI.Beatmap
             RelativeSizeAxes = Axes.Both;
 
             int yOffset = 60;
+            BeatmapScrollSelectItemContent content;
             foreach(IBeatmapGeneral map in ParentItem.Value.GetBeatmaps())
             {
-                ItemContents.Add( new BeatmapScrollSelectItemContent(this, map){ Y = yOffset } );
+                content = new BeatmapScrollSelectItemContent(this, map)
+                {
+                    Y = yOffset
+                };
+
+                ItemContents.Add( content );
                 yOffset += BasicScrollSelect<object>.ITEM_SPACING + 50;
             }
 
@@ -187,7 +206,11 @@ namespace noobOsu.Game.UI.Beatmap
             if (!addedItems)
             {
                 foreach(BeatmapScrollSelectItemContent map in ItemContents)
-                    ParentItem.InsertItemContent(map);
+                {
+                    ParentItem.AddChild(map);
+                    //AddInternal(map);
+                    map.Show();
+                }
             }
             this.MoveToX(0, 200);
 
@@ -201,7 +224,9 @@ namespace noobOsu.Game.UI.Beatmap
             {
                 foreach(BeatmapScrollSelectItemContent map in ItemContents)
                 {
-                    ParentItem.RemoveItemContent(map);
+                    ParentItem.RemoveChild(map);
+                    //RemoveInternal(map, false);
+                    map.Hide();
                     map.Deselect();
                 }
             }
@@ -221,15 +246,9 @@ namespace noobOsu.Game.UI.Beatmap
             set
             {
                 if (value)
-                {
                     Show();
-                    osu.Framework.Logging.Logger.Log("matching filter!");
-                }
                 else
-                {
                     Hide();
-                    osu.Framework.Logging.Logger.Log("NOT matching filter!");
-                }
             }
         }
 
@@ -259,8 +278,8 @@ namespace noobOsu.Game.UI.Beatmap
 
             filterTerms.Add(Value.DifficultyName);
 
-            AddInternal(box);
-            AddInternal(text);
+            Content.Add(box);
+            Content.Add(text);
         }
 
         protected override bool OnClick(ClickEvent e)
